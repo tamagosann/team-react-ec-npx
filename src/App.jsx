@@ -20,7 +20,9 @@ function App() {
 
   useEffect(() => {
     if (isSignedIn) {
-      dispatch(fetchProducts());
+
+    } else {
+
     }
   }, [isSignedIn]);
 

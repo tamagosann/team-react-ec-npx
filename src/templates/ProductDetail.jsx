@@ -2,7 +2,9 @@ import React from 'react';
 
 const ProductDetail = () => {
     return (
-        <div>ProductDetail</div>
+    <>
+        <p>ProductDetail</p>
+    </>
     )
 }
 
