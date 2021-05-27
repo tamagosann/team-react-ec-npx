@@ -12,16 +12,16 @@ export const getUid = createSelector(
     state => state.uid
 )
 
-export const getUsername = createSelector( //こんにちは、まるまるさんを表示するためにつかって！
+export const getUsername = createSelector( 
     [usersSelector],
-    state => state.isSignedIn
+    state => state.username
 )
 
-export const getProductsInCart = createSelector( //こんにちは、まるまるさんを表示するためにつかって！
+export const getProductsInCart = createSelector( 
     [usersSelector],
-    state => state.isSignedIn
+    state => state.cart
 )
-export const getOrderHistory = createSelector( //こんにちは、まるまるさんを表示するためにつかって！
+export const getOrderHistory = createSelector(
     [usersSelector],
-    state => state.isSignedIn
+    state => state.orders
 )

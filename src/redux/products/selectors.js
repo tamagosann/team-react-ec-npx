@@ -4,5 +4,10 @@ const productSelector = (state) => state.products;
 
 export const getProducts = createSelector(
     [productSelector],
-    state => state.list
+    state => state.productsList
+);
+
+export const getToppings = createSelector(
+    [productSelector],
+    state => state.toppings
 );
