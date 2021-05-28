@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Container, FormControl, FormControlLabel, FormLabel, Grid, IconButton, InputLabel, List, ListItem, ListItemText, MenuItem, Paper, Radio, RadioGroup, Select, Typography } from '@material-ui/core';
+import { Checkbox, Container, FormControl, FormControlLabel, FormLabel, Grid, IconButton, InputLabel, List, ListItem, ListItemText, MenuItem, Paper, Radio, RadioGroup, Select, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
@@ -20,34 +20,22 @@ const ProductDetail = () => {
     const selector = useSelector(state => state);
     const products = getProducts(selector);
     const toppings = getToppings(selector);
-    let selectedToppings = [{
-        toppingId: '0001',
-        toppingName: "onion",
-        size: 's',
-        price: 100,
-    }];
     const [selectedSize, setSelectedSize] = useState('s');
     const handleChangeSelectedSize = (event) => {
         setSelectedSize(event.target.value);
     };
-    const [currentTopping, setCurrentTopping] = useState('');
-    const selectorOnChange = useCallback((event) => {
-        setCurrentTopping(event.target.value);
-    },[setCurrentTopping]);
-    const addTopping = useCallback(() => {
 
-    },[])
-    const deleteTopping = (topping) => {
-        console.log('きたよ')
-        const newSelectedToppings = selectedToppings.filter(selectedtoppping => {
-            return selectedtoppping.toppingId !== topping.toppingId || selectedtoppping.toppingName !== topping.toppingName || selectedtoppping.size !== topping.size
-        });
-        console.log(newSelectedToppings);
-    }
+    const [selectToppings, setSelectToppings] = useState({
+        checkedA: false,
+        checkedB: false,
+        checkedF: false,
+        checkedG: false,
+      });
 
-    console.log(products)
-    console.log(toppings)
-  
+    const handleChange = (event) => {
+      setSelectToppings({ ...selectToppings, [event.target.name]: event.target.checked });
+    };
+
     let product;
 
     // useEffect(() => {
@@ -60,9 +48,6 @@ const ProductDetail = () => {
     // }, [products])
 
     if(true) {
-        const progressData = [
-            0,10,20,30,40,50,60,70,80,90,100,
-        ];
 
         return (
             <Container maxWidth="sm">
@@ -89,32 +74,6 @@ const ProductDetail = () => {
                       </RadioGroup>
                     </FormControl>
                     <h3 className="product-h3">トッピング</h3>
-                    <List>
-                        {selectedToppings && selectedToppings.map((topping,index) => (
-                            <ListItem key={index}>
-                                <ListItemText primary={`${topping.toppingName}　${topping.size}　${topping.price}円` } />
-                                <IconButton onClick={deleteTopping(topping)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </ListItem>
-                        ))}
-                        <ListItem>
-                            <FormControl className={classes.formControl}>
-                              <InputLabel id="demo-simple-select-label">トッピング</InputLabel>
-                              <Select
-                                value={currentTopping}
-                                onChange={selectorOnChange}
-                              >
-                                {progressData.map(data => {
-                                  return <MenuItem key={data} value={data}>{data}</MenuItem>
-                                })}
-                              </Select>
-                            </FormControl>
-                            <IconButton onClick={addTopping}>
-                                <AddIcon />
-                            </IconButton>
-                        </ListItem>
-                    </List>
 
                 </Paper>
             </Container>
