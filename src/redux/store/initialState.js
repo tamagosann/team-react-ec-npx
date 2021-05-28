@@ -85,17 +85,17 @@ const initialState = {
         },
         // role: '', //管理者かユーザーかを認識するために使う
         cart: [ //この中身はfirebaseのuser/cartサブコレクションから持ってくる
-            {
-                productId: '0001',
-                productSize: 'm',
-                quantity: 2,
-                choseToppings: [//今回は一個しかトッピングを指定してないけど、本当はたくさん選択できるよーーーおおおおお！。
-                    {
-                        toppingId: 'aaa',
-                        toppingSize: 's'
-                    },
-                ],
-            }
+            // {
+            //     productId: '0001',
+            //     productSize: 'm',
+            //     quantity: 2,
+            //     choseToppings: [//今回は一個しかトッピングを指定してないけど、本当はたくさん選択できるよーーーおおおおお！。
+            //         {
+            //             toppingId: 'aaa',
+            //             toppingSize: 's'
+            //         },
+            //     ],
+            // }
         ],
         orders: [
             {
