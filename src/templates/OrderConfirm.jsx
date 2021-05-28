@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { PrimaryButton } from "../components/UIKit";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import DateInput from '../components/UIKit/DateInput';
+// import DateInput from '../components/UIKit/DateInput';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 // import InputLabel from '@material-ui/core/InputLabel';
@@ -30,22 +30,28 @@ const useStyles = makeStyles((theme) => ({
 const OrderConfirm = () => {
 
   const classes = useStyles();
-  // const inputRef = useRef(null);
-  // const [inputError, setInputError] = useState(false);
   const [destinationName, setDestinationName] = useState('')
   const [destinationMail, setDestinationMail] = useState('')
   const [destinationZipcode, setDestinationZipcode] = useState('')
   const [destinationAddress, setDestinationAddress] = useState('')
   const [destinationTel, setDestinationTel] = useState('')
-  const [destinationDay, setDestinationDay] = useState('')
-  // DayだけuseStateに値入れても画面に反映できない
+  const [destinationDate, setDestinationDate] = useState('')
   const [destinationTime, setDestinationTime] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('');
   
+  const errorMessages = {
+        destinationName: '',
+        destinationMail: '',
+        destinationZipcode:'',
+        destinationAddress:'',
+        destinationTel: '',
+        destinationDateTime:'',
+  }
+
   const destinationNameChange = useCallback((e) => {
     setDestinationName(e.target.value);
   }, [setDestinationName])
-  
+
   const destinationMailChange = useCallback((e) => {
     setDestinationMail(e.target.value);
   }, [setDestinationMail])
@@ -62,9 +68,9 @@ const OrderConfirm = () => {
     setDestinationTel(e.target.value);
   }, [setDestinationTel])
 
-  const destinationDayChange = useCallback((e) => {
-    setDestinationDay(e.target.value);
-  }, [setDestinationDay])
+  const destinationDateChange = useCallback((e) => {
+    setDestinationDate(e.target.value);
+  }, [setDestinationDate])
 
   const destinationTimeChange = useCallback((e) => {
     setDestinationTime(e.target.value);
@@ -74,32 +80,77 @@ const OrderConfirm = () => {
     setPaymentMethod(e.target.value);
   },[setPaymentMethod])
 
-  
+  const selectedDate = new Date(destinationDate);
+  // const selectedDateYear = selectedDate.getFullYear();
+  // const selectedDateMonth = selectedDate.getMonth() + 1;
+  // const selectedDateDay = selectedDate.getDate();
+  const nowDateTime = new Date();
+  // const nowDateTimeYear = nowDateTime.getFullYear();
+  // const nowDateTimeMonth = nowDateTime.getMonth() + 1;
+  // const nowDateTimeDay = nowDateTime.getDate();
+  // const nowDateTimeHours = nowDateTime.getHours();
+
+  // console.log(destinationDate)
+  // console.log(selectedDate)
+  // console.log(nowDateTime)
+
+  // console.log('=============')
+  // console.log(destinationDate)
+  // console.log(destinationTime)
+  // console.log(paymentMethod)
+
+  if (!destinationName) {
+    errorMessages.destinationName = '名前を入力してください'
+  }
+
+  if (!destinationMail) {
+    errorMessages.destinationMail = 'メールアドレスを入力してください'
+  } else if (destinationMail.indexOf('@') === -1) {
+    errorMessages.destinationMail = 'メールアドレスの形式が不正です'
+  }
+
+  if (!destinationZipcode) {
+    errorMessages.destinationZipcode = '郵便番号を入力してください'
+  } else if (!destinationZipcode.match(/^\d{3}-?\d{4}$/)) {
+    errorMessages.destinationZipcode = '郵便番号はXXX-XXXXの形式で入力してください'
+  }
+
+  if(!destinationAddress) {
+    errorMessages.destinationAddress = '住所を入力してください'
+  }
+
+  if (!destinationTel) {
+    errorMessages.destinationTel = '電話番号を入力して下さい'
+  } else if (!destinationTel.match(/\d{1,4}-\d{1,4}-\d{3,4}$/)) {
+    errorMessages.destinationTel = '電話番号はXXXX-XXXX-XXXXの形式で入力してください'
+  }
+
+  if (!(destinationDate && destinationTime)) {
+    errorMessages.destinationDateTime = '配達日時を入力して下さい'
+  }
+
+  if(!paymentMethod) {
+    errorMessages.paymentMethod = 'お支払い方法を選択してください'
+  }
+
   return (
     <>
       <p className={classes.title}>お届け先情報</p>
       <div>お名前</div>
       <TextField
-          // error={inputError}
-          // // inputProps={{ pattern: "^[a-zA-Z0-9_]+$" }}
-          // inputRef={inputRef}          
-          // id="outlined-basic"
-          // helperText={inputRef?.current?.validationMessage}
-        value={ destinationName }
+        value={destinationName}
         onChange={destinationNameChange}
         required
       />
+      <span>{ errorMessages.destinationName }</span>
+
       <div>メールアドレス</div>
       <TextField
-        // error={inputError}
-        // inputProps={{ pattern: "^[a-zA-Z0-9_]+$" }}
-        // inputRef={inputRef}          
-        // id="outlined-basic"
-        // helperText={inputRef?.current?.validationMessage}
         value={ destinationMail }
         onChange={destinationMailChange}
         required
       />
+      <span>{ errorMessages.destinationMail }</span>
 
       <div>郵便番号</div>
       <TextField
@@ -114,6 +165,8 @@ const OrderConfirm = () => {
         className={classes.addressbutton}
       />
       
+      <span>{errorMessages.destinationZipcode}</span>
+      
       <div>住所</div>                
         <TextField
         value={ destinationAddress }
@@ -121,6 +174,8 @@ const OrderConfirm = () => {
         required
       />
       
+      <span>{errorMessages.destinationAddress}</span>
+
       <div>電話番号</div>
       <TextField
         value={ destinationTel }
@@ -128,18 +183,33 @@ const OrderConfirm = () => {
         required
       />
       
+      <span>{errorMessages.destinationTel}</span>
+
       <div>配達日時</div>
-      <DateInput
-        value={ destinationDay }
-        onChange={destinationDayChange}
-        required
+      <TextField
+            // fullWidth={props.fullWidth}
+            // margin='dense'
+            // label={props.label}
+            type="date"
+            // required={props.required}
+            // defaultValue={}
+            // InputLabelProps={{
+            //     shrink: true,
+            // }}
+            value={destinationDate}
+            onChange={destinationDateChange}
       />
+      {/* <DateInput
+        value={ destinationDate }
+        onChange={destinationDateChange}
+        required
+      /> */}
         
       <FormControl>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={destinationTime}
+          value={ destinationTime }
           onChange={destinationTimeChange}
           required
         >
@@ -155,6 +225,8 @@ const OrderConfirm = () => {
         </Select>
       </FormControl>
 
+      <span>{errorMessages.destinationDateTime}</span>
+
       <p>お支払い方法</p>
       <RadioGroup
         name="paymentMethod"
@@ -163,7 +235,9 @@ const OrderConfirm = () => {
         required>
         <FormControlLabel value="1" control={<Radio />} label="代金引換" />
         <FormControlLabel value="2" control={<Radio />} label="クレジットカード" />
+        <span>{errorMessages.paymentMethod}</span>
       </RadioGroup>
+      
             
       <PrimaryButton className={classes.title}
         label={'この内容で注文する'}
