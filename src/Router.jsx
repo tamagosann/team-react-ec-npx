@@ -3,6 +3,7 @@ import { Switch, Route } from "react-router-dom";
 import Auth from "./Auth";
 import { CartList, LogIn, OrderConfirm, OrderHistory, ProductDetail, ProductList } from "./templates";
 import {CartTable} from './components/Cart/index'
+import OrderComplete from "./templates/OrderComplete";
 
 const Router = () => {
   return (
@@ -13,6 +14,7 @@ const Router = () => {
         <Route exact path={"/product"} component={ProductDetail} />
         {/* <Route exact path={"/cart"} component={CartList} /> */}
         <Route exact path={"/cart"} component={CartTable} />
+        <Route exact path={"/order/complete"} component={OrderComplete} />
         <Route exact path={"/order/confirm"} component={OrderConfirm} />
         <Route exact path={"/order/history"} component={OrderHistory} />
       </Auth>

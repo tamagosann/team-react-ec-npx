@@ -37,31 +37,23 @@ const initialState = {
         toppings: [
             {
                 toppingId: 'aaa',
-                toppingName: 'onion',
-                sizez: [
-                    {
-                        size: 's',
-                        price: 100
-                    },
-                    {
-                        size: 'm',
-                        price: 150
-                    }
-                ]
+                toppingName: 'onion 少なめ',
+                price: 100,
             },
             {
                 toppingId: 'bbb',
-                toppingName: 'bacon',
-                sizez: [
-                    {
-                        size: 's',
-                        price: 200,
-                    },
-                    {
-                        size: 'm',
-                        price: 400,
-                    },
-                ]
+                toppingName: 'onion 多め',
+                price: 150,
+            },
+            {
+                toppingId: 'ccc',
+                toppingName: 'sermon 少なめ',
+                price: 150,
+            },
+            {
+                toppingId: 'ddd',
+                toppingName: 'sermon 多め',
+                price: 200,
             },
         ],
     },
