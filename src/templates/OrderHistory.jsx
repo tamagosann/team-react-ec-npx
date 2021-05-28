@@ -1,9 +1,168 @@
 import React from 'react';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
 
-const OrderHistory = () => {
-    return(
-        <div>OrderHistory</div>
+import CardMedia from '@material-ui/core/CardMedia';
+
+//acorditionのimport
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
+//buttonのimport
+import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.common.black,
+  },
+  body: {
+    fontSize: 14,
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+  },
+}))(TableRow);
+
+function createData(name, calories, fat, carbs, protein) {
+  return { name, calories, fat, carbs, protein };
+}
+
+const useStyles = makeStyles((theme) => ({
+  table: {
+    minWidth: 500,
+  },
+  media: {
+    width: 130,
+    height: 100,
+  },
+  rootpaper: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    '& > *': {
+      margin: theme.spacing(5),
+      width: theme.spacing(16),
+      height: theme.spacing(16),
+    },
+  },
+  rootacording: {
+    width: '100%',
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
+  },
+  button: {
+    margin: theme.spacing(1),
+  }
+}));  
+
+const orders= [
+    {
+        uid: '1122334455',
+        orderId: 'abcdefg',
+        product : {
+            productName:'エスプレッソ',
+            productId: '0001',
+            productSize: 'M',
+            quantity: 2,
+            choseToppings: 
+                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
+                    toppingId: 'aaa',
+                    toppingName: 'onion',
+                    topppingsize: 'M',
+                },//トッピングの数だけこのオブジェクトが続く
+            amount: 700, //ここは、注文するときに計算して値を入れる。
+        },
+        status: 1,
+        orderDate: '2021-05-04',
+        destinationName: '相澤',
+        destinationZipcode: '111-1111',
+        destinationAddress: '東京都',
+        destinationTel: '090-8888-8888',
+        destinationTime: '2021-05-10',
+        paymentMethod: 1,
+        creditCardNo: '1111-1111-1111-1111',
+    },
+]
+
+const OrderHistory=()=> {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.rootacording}>
+            <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="customized table">
+                <TableHead>
+                <TableRow>
+                    <StyledTableCell></StyledTableCell>
+                    <StyledTableCell align="center">商品</StyledTableCell>
+                    <StyledTableCell align="center">お客様情報</StyledTableCell>
+                    <StyledTableCell align="center">配送状況</StyledTableCell>
+                    <StyledTableCell align="center"></StyledTableCell>
+
+                </TableRow>
+                </TableHead>
+                <TableBody>
+                {orders.map((order) => (
+                    <StyledTableRow key={order.orderId}>
+                    <StyledTableCell component="th" scope="row" align="right">
+                    <CardMedia
+                        className={classes.media}
+                        image="https://img.cpcdn.com/recipes/4911988/800x800c/aa46163e885ab2571f2e3e70afb0ff6f?u=15300935&p=1518681059"
+                        title="Contemplative Reptile"
+                    />
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                        <div>{order.product.productName} ({order.product.productSize}) × {order.product.quantity}個</div>
+                        <div>トッピング：{order.product.choseToppings.toppingName} ({order.product.choseToppings.topppingsize})</div>
+                        <div>小計 {order.product.amount}円</div>
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                        <div>注文日: {order.orderDate}</div>
+                        <div>{order.destinationZipcode}</div>
+                        <div>{order.destinationAddress}</div>
+                        <div>{order.destinationTel}</div>
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                        <div>配達予定日: {order.destinationTime} </div>
+                        <div>{order.status}</div>
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                    <Button
+                        size="small"
+                        variant="contained"
+                        color="secondary"
+                        className={classes.button}
+                        startIcon={<DeleteIcon />}
+                        align="right"
+                    >キャンセル
+                    </Button>
+                    </StyledTableCell>
+
+                    </StyledTableRow>
+                ))}
+                </TableBody>
+            </Table>
+            </TableContainer>
+    </div>
     )
 }
 
 export default OrderHistory;
+
