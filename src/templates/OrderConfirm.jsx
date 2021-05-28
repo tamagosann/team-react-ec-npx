@@ -148,7 +148,7 @@ const OrderConfirm = () => {
 
   if (!destinationZipcode) {
     errorMessages.destinationZipcode = '郵便番号を入力してください'
-  } else if (!destinationZipcode.match(/^\d{3}-?\d{4}$/)) {
+  } else if (!destinationZipcode.match(/^[0-9]{3}-[0-9]{4}$/)) {
     errorMessages.destinationZipcode = '郵便番号はXXX-XXXXの形式で入力してください'
   }
 
