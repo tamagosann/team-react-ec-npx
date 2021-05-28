@@ -23,8 +23,10 @@ import DirectionsIcon from '@material-ui/icons/Directions';
 //firebaseのimport
 import firebase from 'firebase';
 
-import {BrowserRouter as Router ,Switch,Route,Link} from 'react-router-dom';
-import ProductDetail from './ProductDetail'
+import {useHistory} from 'react-router-dom';
+import {ProductDetail} from './ProductDetail'
+
+import Link from '@material-ui/core/Link';
 
 const useStyles = makeStyles((theme) =>({
   rootcard: {
@@ -32,7 +34,6 @@ const useStyles = makeStyles((theme) =>({
   },
   rootgrid: {
     flexGrow: 1,
-    // grid-template-rows: '100px';
   },
   paper: {
     height: 140,
@@ -69,6 +70,9 @@ const useStyles = makeStyles((theme) =>({
     height: 28,
     margin: 4,
   },
+  links: {
+    underline: 'none',
+  }
 
 }));  
 const products=[]
@@ -99,21 +103,20 @@ const db =()=>{
 //     {productId:18,productName:'コーヒー17',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'}
 // ]
 
+
+
 const ProductList=()=> {
   // const [spacing, setSpacing] = React.useState(2);
-  const classes = useStyles();
-//   const products=[]
-//   const small=[]
-// const db ={
-//   small=firebase.firestore().collection('products').doc('FeKpGj7gUgt7dvFmbWIU').collection('parentProducts');
-//   small.get().then(snapshot => snapshot.forEach(doc => products.push(doc.data())))
-// }
-useEffect(()=>{
-  db()
-})
 
+  const classes = useStyles();
+  useEffect(()=>{
+    db()
+  })
+  const history =useHistory();
+  const handleLink= path =>history.push(path);
+  
   return (
-      <Route>
+      <>
       {/* <button onClick={db()}>商品読み込み</button> */}
         <Paper component="form" className={classes.rootsearch} >
             <InputBase
@@ -129,15 +132,15 @@ useEffect(()=>{
                 <DirectionsIcon />
             </IconButton>
         </Paper>
-
+        {/* <Router> */}
     {/* <Grid container className={classes.rootgrid} spacing={2}>
       <Grid item xs={15}> */}
         <Grid container justify="center" spacing={0} className={classes.rootgrid}>
         {products.map((product,value) => (
             <Grid key={value} item xs={8} sm={4} className={classes.control}>
-              {/* <Link> */}
+              {/* <Link to={`/ProductDetail/${product.productId}`} className={classes.links}> */}
                         <Card className={classes.rootcard} >
-                        <CardActionArea>
+                        <CardActionArea onClick={()=>handleLink(`/productdetail/${product.productId}`)}>
                         <CardMedia
                             className={classes.media}
                             image="https://img.cpcdn.com/recipes/4911988/800x800c/aa46163e885ab2571f2e3e70afb0ff6f?u=15300935&p=1518681059"
@@ -162,10 +165,11 @@ useEffect(()=>{
         </Grid>
       {/* </Grid>
     </Grid> */}
-    <Switch>
-      {/* <Route path='/ProductD/' component={ProductDetail}></Route> */}
+    {/* <Switch>
+      <Route path='/ProductDetail/:productId' component={ProductDetail}></Route>
     </Switch>
-    </Route>
+    </Router> */}
+    </>
   );
 }
 export default ProductList;
