@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import {useEffect} from 'react';
 //Cardのimport
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -13,9 +14,17 @@ import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+// import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import DirectionsIcon from '@material-ui/icons/Directions';
+// //お気に入りボタンのimport
+// import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
+
+//firebaseのimport
+import firebase from 'firebase';
+
+import {BrowserRouter as Router ,Switch,Route,Link} from 'react-router-dom';
+import ProductDetail from './ProductDetail'
 
 const useStyles = makeStyles((theme) =>({
   rootcard: {
@@ -23,6 +32,7 @@ const useStyles = makeStyles((theme) =>({
   },
   rootgrid: {
     flexGrow: 1,
+    // grid-template-rows: '100px';
   },
   paper: {
     height: 140,
@@ -61,34 +71,50 @@ const useStyles = makeStyles((theme) =>({
   },
 
 }));  
+const products=[]
+const db =()=>{
+  const small=firebase.firestore().collection('products').doc('FeKpGj7gUgt7dvFmbWIU').collection('parentProducts')
+  small.get().then(snapshot => snapshot.forEach(doc => products.push({ ...doc.data(),productId:doc.id})))
+  console.log(products)
+}
 
-const products = [
-    {productId:1,productName:'コーヒー０',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:2,productName:'コーヒー１',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:3,productName:'コーヒー２',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:4,productName:'コーヒー３',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:5,productName:'コーヒー4',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:6,productName:'コーヒー5',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:7,productName:'コーヒー6',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:8,productName:'コーヒー7',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:9,productName:'コーヒー8',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:10,productName:'コーヒー9',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:11,productName:'コーヒー10',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:12,productName:'コーヒー11',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:13,productName:'コーヒー12',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:14,productName:'Gコーヒー13',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:15,productName:'コーヒー14',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:16,productName:'コーヒー15',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:17,productName:'コーヒー16',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
-    {productId:18,productName:'コーヒー17',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'}
-]
+// const products = [
+//     {productId:1,productName:'コーヒー０',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:2,productName:'コーヒー１',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:3,productName:'コーヒー２',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:4,productName:'コーヒー３',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:5,productName:'コーヒー4',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:6,productName:'コーヒー5',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:7,productName:'コーヒー6',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:8,productName:'コーヒー7',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:9,productName:'コーヒー8',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:10,productName:'コーヒー9',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:11,productName:'コーヒー10',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:12,productName:'コーヒー11',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:13,productName:'コーヒー12',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:14,productName:'Gコーヒー13',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:15,productName:'コーヒー14',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:16,productName:'コーヒー15',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:17,productName:'コーヒー16',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'},
+//     {productId:18,productName:'コーヒー17',size:[{size:'M',price:480},{size:'L',price:700}], img:'1.jpg'}
+// ]
 
 const ProductList=()=> {
-  const [spacing, setSpacing] = React.useState(2);
+  // const [spacing, setSpacing] = React.useState(2);
   const classes = useStyles();
+//   const products=[]
+//   const small=[]
+// const db ={
+//   small=firebase.firestore().collection('products').doc('FeKpGj7gUgt7dvFmbWIU').collection('parentProducts');
+//   small.get().then(snapshot => snapshot.forEach(doc => products.push(doc.data())))
+// }
+useEffect(()=>{
+  db()
+})
 
   return (
-      <>
+      <Route>
+      {/* <button onClick={db()}>商品読み込み</button> */}
         <Paper component="form" className={classes.rootsearch} >
             <InputBase
                 className={classes.input}
@@ -104,12 +130,12 @@ const ProductList=()=> {
             </IconButton>
         </Paper>
 
-    <Grid container className={classes.rootgrid} spacing={2}>
-      <Grid item xs={15}>
-        <Grid container justify="center" spacing={0}>
+    {/* <Grid container className={classes.rootgrid} spacing={2}>
+      <Grid item xs={15}> */}
+        <Grid container justify="center" spacing={0} className={classes.rootgrid}>
         {products.map((product,value) => (
-            <span>
-            <Grid key={value} item xs={15} className={classes.control}>
+            <Grid key={value} item xs={8} sm={4} className={classes.control}>
+              {/* <Link> */}
                         <Card className={classes.rootcard} >
                         <CardActionArea>
                         <CardMedia
@@ -130,14 +156,16 @@ const ProductList=()=> {
                         </CardContent>
                         </CardActionArea>
                     </Card>
+               {/* </Link> */}
             </Grid>
-
-            </span>
           ))}
         </Grid>
-      </Grid>
-    </Grid>
-    </>
+      {/* </Grid>
+    </Grid> */}
+    <Switch>
+      {/* <Route path='/ProductD/' component={ProductDetail}></Route> */}
+    </Switch>
+    </Route>
   );
 }
 export default ProductList;
