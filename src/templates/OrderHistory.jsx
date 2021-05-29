@@ -21,6 +21,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import Box from '@material-ui/core/Box';
+
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: theme.palette.common.white,
@@ -75,6 +77,9 @@ const useStyles = makeStyles((theme) => ({
   },
   red:{
       color:'red'
+  },
+  gray:{
+      color:'#C0C0C0'
   },
   message: {
     fontWeight: 'bold',
@@ -245,7 +250,8 @@ const OrderHistory=()=> {
                 </TableHead>
                 <TableBody>
                 {orders.map((order) => (
-                
+                    <>
+                 {order.status>=0 && order.status <9 && (
                     <StyledTableRow key={order.orderId}>
                     <StyledTableCell component="th" scope="row" align="right">
                     <CardMedia
@@ -255,9 +261,20 @@ const OrderHistory=()=> {
                     />
                     </StyledTableCell>
                     <StyledTableCell align="left">
+                        {order.status>=0 && order.status<9 && (
+                        <>
                         <div>{order.product.productName} ({order.product.productSize}) × {order.product.quantity}個</div>
                         <div>トッピング：{order.product.choseToppings.toppingName} ({order.product.choseToppings.topppingsize})</div>
                         <div>小計 {order.product.amount}円</div>
+                        </>
+                        )}
+                        {order.status === 9 && (
+                        <>
+                        <div className={classes.gray}>{order.product.productName} ({order.product.productSize}) × {order.product.quantity}個</div>
+                        <div>トッピング：{order.product.choseToppings.toppingName} ({order.product.choseToppings.topppingsize})</div>
+                        <div>小計 {order.product.amount}円</div>
+                        </>
+                        )}
                     </StyledTableCell>
                     <StyledTableCell align="left">
                     {(order.status==0 || order.status==1) && (
@@ -296,7 +313,10 @@ const OrderHistory=()=> {
                     )}
                     </StyledTableCell>
                       </StyledTableRow>
+                      )}
+                      </>
                 ))}
+               
                 </TableBody>
             </Table>
             </TableContainer>
