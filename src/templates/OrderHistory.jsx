@@ -44,6 +44,9 @@ function createData(name, calories, fat, carbs, protein) {
 }
 
 const useStyles = makeStyles((theme) => ({
+  position:{
+      align:'center'
+  },
   table: {
     minWidth: 500,
   },
@@ -69,7 +72,16 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     margin: theme.spacing(1),
-  }
+  },
+  red:{
+      color:'red'
+  },
+  message: {
+    fontWeight: 'bold',
+    fontSize: '20px',
+    position: 'relative',
+  },
+
 }));  
 
 const orders= [
@@ -89,11 +101,115 @@ const orders= [
                 },//トッピングの数だけこのオブジェクトが続く
             amount: 700, //ここは、注文するときに計算して値を入れる。
         },
+        status: 0,
+        orderDate: '2021-05-04',
+        destinationName: '相澤',
+        destinationZipcode: '111-1111',
+        destinationAddress: '東京都新宿区',
+        destinationTel: '090-8888-8888',
+        destinationTime: '2021-05-10',
+        paymentMethod: 1,
+        creditCardNo: '1111-1111-1111-1111',
+    },
+    {
+        uid: '1122334455',
+        orderId: 'has',
+        product : {
+            productName:'エスプレッソ',
+            productId: '0001',
+            productSize: 'M',
+            quantity: 2,
+            choseToppings: 
+                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
+                    toppingId: 'aaa',
+                    toppingName: 'onion',
+                    topppingsize: 'M',
+                },//トッピングの数だけこのオブジェクトが続く
+            amount: 700, //ここは、注文するときに計算して値を入れる。
+        },
         status: 1,
         orderDate: '2021-05-04',
         destinationName: '相澤',
         destinationZipcode: '111-1111',
-        destinationAddress: '東京都',
+        destinationAddress: '東京都新宿区',
+        destinationTel: '090-8888-8888',
+        destinationTime: '2021-05-10',
+        paymentMethod: 1,
+        creditCardNo: '1111-1111-1111-1111',
+    },
+    {
+        uid: '1122334455',
+        orderId: 'dfe',
+        product : {
+            productName:'エスプレッソ',
+            productId: '0001',
+            productSize: 'M',
+            quantity: 2,
+            choseToppings: 
+                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
+                    toppingId: 'aaa',
+                    toppingName: 'onion',
+                    topppingsize: 'M',
+                },//トッピングの数だけこのオブジェクトが続く
+            amount: 700, //ここは、注文するときに計算して値を入れる。
+        },
+        status: 2,
+        orderDate: '2021-05-04',
+        destinationName: '相澤',
+        destinationZipcode: '111-1111',
+        destinationAddress: '東京都新宿区',
+        destinationTel: '090-8888-8888',
+        destinationTime: '2021-05-10',
+        paymentMethod: 1,
+        creditCardNo: '1111-1111-1111-1111',
+    },
+    {
+        uid: '1122334455',
+        orderId: 'jfs',
+        product : {
+            productName:'エスプレッソ',
+            productId: '0001',
+            productSize: 'M',
+            quantity: 2,
+            choseToppings: 
+                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
+                    toppingId: 'aaa',
+                    toppingName: 'onion',
+                    topppingsize: 'M',
+                },//トッピングの数だけこのオブジェクトが続く
+            amount: 700, //ここは、注文するときに計算して値を入れる。
+        },
+        status: 3,
+        orderDate: '2021-05-04',
+        destinationName: '相澤',
+        destinationZipcode: '111-1111',
+        destinationAddress: '東京都新宿区',
+        destinationTel: '090-8888-8888',
+        destinationTime: '2021-05-10',
+        paymentMethod: 1,
+        creditCardNo: '1111-1111-1111-1111',
+    },
+    {
+        uid: '1122334455',
+        orderId: 'ufv',
+        product : {
+            productName:'エスプレッソ',
+            productId: '0001',
+            productSize: 'M',
+            quantity: 2,
+            choseToppings: 
+                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
+                    toppingId: 'aaa',
+                    toppingName: 'onion',
+                    topppingsize: 'M',
+                },//トッピングの数だけこのオブジェクトが続く
+            amount: 700, //ここは、注文するときに計算して値を入れる。
+        },
+        status: 9,
+        orderDate: '2021-05-04',
+        destinationName: '相澤',
+        destinationZipcode: '111-1111',
+        destinationAddress: '東京都新宿区',
         destinationTel: '090-8888-8888',
         destinationTime: '2021-05-10',
         paymentMethod: 1,
@@ -104,22 +220,32 @@ const orders= [
 const OrderHistory=()=> {
   const classes = useStyles();
 
+    const message={
+        unpaid:'未入金',
+        paid:'入金済',
+        sent:'発送済',
+        deliveried:'配達済',
+        cancel:'キャンセルされました'
+    }
   return (
     <div className={classes.rootacording}>
+        {orders.length==0 && (<div className={classes.message} align='center'>注文履歴がありません</div>)}
+        {orders.length>0 && (
             <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="customized table">
                 <TableHead>
                 <TableRow>
                     <StyledTableCell></StyledTableCell>
-                    <StyledTableCell align="center">商品</StyledTableCell>
-                    <StyledTableCell align="center">お客様情報</StyledTableCell>
-                    <StyledTableCell align="center">配送状況</StyledTableCell>
+                    <StyledTableCell align="center" className={classes.message}>商品</StyledTableCell>
+                    <StyledTableCell align="center" className={classes.message}>お客様情報</StyledTableCell>
+                    <StyledTableCell align="center" className={classes.message}>配送状況</StyledTableCell>
                     <StyledTableCell align="center"></StyledTableCell>
 
                 </TableRow>
                 </TableHead>
                 <TableBody>
                 {orders.map((order) => (
+                
                     <StyledTableRow key={order.orderId}>
                     <StyledTableCell component="th" scope="row" align="right">
                     <CardMedia
@@ -134,32 +260,47 @@ const OrderHistory=()=> {
                         <div>小計 {order.product.amount}円</div>
                     </StyledTableCell>
                     <StyledTableCell align="left">
+                    {(order.status==0 || order.status==1) && (
+                        <>
                         <div>注文日: {order.orderDate}</div>
                         <div>{order.destinationZipcode}</div>
                         <div>{order.destinationAddress}</div>
                         <div>{order.destinationTel}</div>
-                    </StyledTableCell>
+                        </>
+                        )}
+                        </StyledTableCell>
+                    {/* {orders.filter()=>( */}
                     <StyledTableCell align="left">
+                        {order.status >=0 && order.status <9 && (
                         <div>配達予定日: {order.destinationTime} </div>
-                        <div>{order.status}</div>
+                        )}
+                        <div className={classes.message} align='center'>
+                            {order.status===0 && (<span className={classes.red}>{message.unpaid}</span>)}
+                            {order.status===1 && message.paid}
+                            {order.status===2 && message.sent}
+                            {order.status===3 && message.deliveried}
+                            {order.status===9 && (<span className={classes.red}>{message.cancel}</span>)}
+                        </div>
                     </StyledTableCell>
                     <StyledTableCell align="left">
+                    {order.status===0 && (
                     <Button
-                        size="small"
-                        variant="contained"
-                        color="secondary"
-                        className={classes.button}
-                        startIcon={<DeleteIcon />}
-                        align="right"
-                    >キャンセル
-                    </Button>
+                    size="small"
+                    variant="contained"
+                    color="secondary"
+                    className={classes.button}
+                    startIcon={<DeleteIcon />}
+                    align="right"
+                >キャンセル
+                </Button>
+                    )}
                     </StyledTableCell>
-
-                    </StyledTableRow>
+                      </StyledTableRow>
                 ))}
                 </TableBody>
             </Table>
             </TableContainer>
+            )}
     </div>
     )
 }
