@@ -1,15 +1,33 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback , useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { PrimaryButton } from "../components/UIKit";
+import { SecondaryButton } from '../components/UIKit';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-// import DateInput from '../components/UIKit/DateInput';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-// import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router';
+import { Container, Paper, Select, MenuItem } from '@material-ui/core';
+import {Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  body: {
+    fontSize: 14,
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+  },
+}))(TableRow);
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -24,10 +42,25 @@ const useStyles = makeStyles((theme) => ({
   },
     addressbutton: {
     margin: '0 20px'
+  },
+  table: {
+    minWidth: 700,
+  },
+  labelTitle: {
+    marginTop: theme.spacing(2),
+    color: '#696969'
+  },
+  error: {
+    color: '#f44336',
+    fontSize: '15px'
   }
 }));
 
 const OrderConfirm = () => {
+  const history = useHistory();
+  const link = useCallback((path) => {
+    history.push(path)
+  },[history]);
 
   const classes = useStyles();
   const [destinationName, setDestinationName] = useState('')
@@ -37,15 +70,33 @@ const OrderConfirm = () => {
   const [destinationTel, setDestinationTel] = useState('')
   const [destinationDate, setDestinationDate] = useState('')
   const [destinationTime, setDestinationTime] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('')
+  const [creditCard, setCreditCard] = useState('');
   
+  useEffect(() => {
+    if (destinationZipcode) {
+      fetch(`https://api.zipaddress.net/?zipcode=${destinationZipcode}`, {
+        mode: 'cors',
+      })
+        .then((result) => {
+          return result.json();
+        })
+        .then((result) => {
+          setDestinationAddress(result.data?.fullAddress || '');
+        });
+    }
+  }, [destinationZipcode]);
+
+  // エラーメッセージ表示用
   const errorMessages = {
-        destinationName: '',
-        destinationMail: '',
-        destinationZipcode:'',
-        destinationAddress:'',
-        destinationTel: '',
-        destinationDateTime:'',
+    destinationName: '',
+    destinationMail: '',        
+    destinationZipcode: '',        
+    destinationAddress: '',        
+    destinationTel: '',
+    destinationDateTime: '',        
+    paymentMethod: '',
+    creditCard: ''
   }
 
   const destinationNameChange = useCallback((e) => {
@@ -78,26 +129,12 @@ const OrderConfirm = () => {
 
   const PaymentMethodChange = useCallback((e) => {
     setPaymentMethod(e.target.value);
-  },[setPaymentMethod])
+  }, [setPaymentMethod])
+  
+  const creditCardChange = useCallback((e) => {
+    setCreditCard(e.target.value);
+  },[setCreditCard])
 
-  const selectedDate = new Date(destinationDate);
-  // const selectedDateYear = selectedDate.getFullYear();
-  // const selectedDateMonth = selectedDate.getMonth() + 1;
-  // const selectedDateDay = selectedDate.getDate();
-  const nowDateTime = new Date();
-  // const nowDateTimeYear = nowDateTime.getFullYear();
-  // const nowDateTimeMonth = nowDateTime.getMonth() + 1;
-  // const nowDateTimeDay = nowDateTime.getDate();
-  // const nowDateTimeHours = nowDateTime.getHours();
-
-  // console.log(destinationDate)
-  // console.log(selectedDate)
-  // console.log(nowDateTime)
-
-  // console.log('=============')
-  // console.log(destinationDate)
-  // console.log(destinationTime)
-  // console.log(paymentMethod)
 
   if (!destinationName) {
     errorMessages.destinationName = '名前を入力してください'
@@ -111,7 +148,7 @@ const OrderConfirm = () => {
 
   if (!destinationZipcode) {
     errorMessages.destinationZipcode = '郵便番号を入力してください'
-  } else if (!destinationZipcode.match(/^\d{3}-?\d{4}$/)) {
+  } else if (!destinationZipcode.match(/^[0-9]{3}-[0-9]{4}$/)) {
     errorMessages.destinationZipcode = '郵便番号はXXX-XXXXの形式で入力してください'
   }
 
@@ -121,129 +158,254 @@ const OrderConfirm = () => {
 
   if (!destinationTel) {
     errorMessages.destinationTel = '電話番号を入力して下さい'
-  } else if (!destinationTel.match(/\d{1,4}-\d{1,4}-\d{3,4}$/)) {
+  } else if (!destinationTel.match(/\d{1,4}-\d{1,4}-\d{1,4}$/)) {
     errorMessages.destinationTel = '電話番号はXXXX-XXXX-XXXXの形式で入力してください'
   }
 
+  const selectedDate = new Date(destinationDate);
+  const additionTime = destinationTime * 60 * 60 * 1000;
+  const makeDateTime = selectedDate.getTime() + additionTime
+  const selectedDateTime = new Date(makeDateTime)
+  const nowDateTime = new Date();
+  console.log(selectedDateTime)
+  console.log(nowDateTime)
+  console.log(selectedDateTime - nowDateTime)
+
   if (!(destinationDate && destinationTime)) {
     errorMessages.destinationDateTime = '配達日時を入力して下さい'
+  } else if (selectedDateTime < nowDateTime) {
+    errorMessages.destinationDateTime = '指定日時を既に過ぎています'
+  } else if (selectedDateTime - nowDateTime < 3 * 60 * 60 * 1000) {
+    errorMessages.destinationDateTime = '今から3時間以上後の日時をご入力ください'
   }
+
+  if (!creditCard) {
+    errorMessages.creditCard = 'クレジットカード番号を入力して下さい'
+  } else if (!creditCard.match(/\d{4}-\d{4}-\d{4}-\d{4}$/)) {
+    errorMessages.creditCard = 'クレジットカード番号はXXXX-XXXX-XXXX-XXXXの形式で入力してください'
+  }
+
+  let credit
 
   if(!paymentMethod) {
     errorMessages.paymentMethod = 'お支払い方法を選択してください'
+  } else if (paymentMethod === '2') {
+    credit = (
+    <>
+        <TextField
+          label="クレジットカード番号"
+          style={{ width: 250 }}
+          value={ creditCard }
+          onChange={ creditCardChange }
+        />
+        <div className={classes.error}>{ errorMessages.creditCard }</div>
+      </>
+    )
   }
+
+  const SelectedItems = [
+    {
+      url:'https://firebasestorage.googleapis.com/v0/b/team-react-ec-npx.appspot.com/o/16.jpg?alt=media&token=fc210a54-369b-4689-bddd-6ff069d8147c',
+      name:'商品1',
+      productSize:'S',
+      productPrice: 400,
+      topping: 'ミルクM',
+      toppingPrice: 300
+    },
+    {
+      url:'https://firebasestorage.googleapis.com/v0/b/team-react-ec-npx.appspot.com/o/16.jpg?alt=media&token=fc210a54-369b-4689-bddd-6ff069d8147c',
+      name:'商品2',
+      productSize:'M',
+      productPrice: 600,
+      topping: '蜂蜜S',
+      toppingPrice: 200
+    },
+    {
+    url:'https://firebasestorage.googleapis.com/v0/b/team-react-ec-npx.appspot.com/o/16.jpg?alt=media&token=fc210a54-369b-4689-bddd-6ff069d8147c',
+    name:'商品3',
+    productSize:'S',
+    productPrice: 500,
+    topping: 'ホイップM',
+    toppingPrice: 300
+    },
+  ];
 
   return (
     <>
-      <p className={classes.title}>お届け先情報</p>
-      <div>お名前</div>
-      <TextField
+    <Container maxWidth="sm">
+        
+    <Table aria-label="customized table" style={{ padding: 20, marginTop: 40,}}>
+        <TableHead>
+          <TableRow>
+            <StyledTableCell align="center">商品</StyledTableCell>
+            <StyledTableCell align="center">内訳</StyledTableCell>
+            <StyledTableCell align="center">商品を削除</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {SelectedItems.map((SelectedItem) => (
+            <StyledTableRow key={SelectedItem.index}>
+              <StyledTableCell component="th" scope="SelectedItem">
+                <img src={SelectedItem.url} alt="" style={{width:100}}/>
+                <br/>
+                {SelectedItem.name}
+              </StyledTableCell>
+
+              <StyledTableCell align="right">         
+                    <TableRow>
+                      <StyledTableCell >サイズ</StyledTableCell>
+                  <StyledTableCell align="right">{ SelectedItem.productSize }</StyledTableCell>
+                  <StyledTableCell align="right">{ SelectedItem.productPrice }円</StyledTableCell>
+                  </TableRow>
+                  <TableRow>
+                      <StyledTableCell>トッピング</StyledTableCell>
+                  <StyledTableCell align="right">{ SelectedItem.topping }</StyledTableCell>
+                  <StyledTableCell align="right">{ SelectedItem.toppingPrice }円</StyledTableCell>
+                  </TableRow>
+                  <TableRow>
+                      <StyledTableCell>小計</StyledTableCell>
+                      <StyledTableCell align="right"></StyledTableCell>
+                  <StyledTableCell align="right">{ SelectedItem.productPrice + SelectedItem.toppingPrice }円</StyledTableCell>
+                  </TableRow>
+              </StyledTableCell>
+
+              <StyledTableCell align="right">
+                <SecondaryButton
+                  label={'削除'}
+                  onClick={() => {}}
+                />
+              </StyledTableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+        </Table>
+        
+      {/* =================合計金額================= */}
+
+      <Paper variant="outlined" component="div" style={{ padding: 20, marginTop: 40, }}>
+        <h1 align="center">
+          消費税： { Math.floor(5000 * 0.1).toLocaleString() }円
+        </h1>
+        <h1 align="center">
+          ご注文合計金額:
+          { Math.floor(5000 * 1.1).toLocaleString() }円(税込)
+        </h1>    
+        </Paper>
+        
+      {/* =================お届け先情報================= */}
+
+      <Paper variant="outlined" component="div" style={{ padding: 20, marginTop: 40,}}>
+          <h2 className="product-h2">お届け先情報</h2>
+          <TextField
+            label="お名前"
+            style={{ width: 250 }}
         value={destinationName}
-        onChange={destinationNameChange}
-        required
+        onChange={ destinationNameChange }
       />
-      <span>{ errorMessages.destinationName }</span>
+      <div className={classes.error}>{ errorMessages.destinationName }</div>
 
-      <div>メールアドレス</div>
-      <TextField
+          <TextField
+            label="メールアドレス"
+            style={{ width: 250 }}
         value={ destinationMail }
-        onChange={destinationMailChange}
-        required
+        onChange={ destinationMailChange }
       />
-      <span>{ errorMessages.destinationMail }</span>
+      <div className={classes.error}>{ errorMessages.destinationMail }</div>
+          
+          <TextField
+            label="郵便番号"
+            style={{ width: 250 }}
+          id="zipcode"
+          value={ destinationZipcode }
+          onChange={destinationZipcodeChange}
+          helperText="郵便番号を入力すると住所が表示されます"
+        />
+      
+      <div className={classes.error}>{ errorMessages.destinationZipcode }</div>
+      
+          <TextField
+            label="住所"
+          id="address"
+          fullWidth
+          value={ destinationAddress }
+          onChange={ destinationAddressChange }
+        />
+      
+      <div className={classes.error}>{ errorMessages.destinationAddress }</div>
 
-      <div>郵便番号</div>
-      <TextField
-        value={ destinationZipcode }
-        onChange={destinationZipcodeChange}
-        required
-      />
-      
-      <PrimaryButton
-        label={'住所検索'}
-        onClick={() => { }}
-        className={classes.addressbutton}
-      />
-      
-      <span>{errorMessages.destinationZipcode}</span>
-      
-      <div>住所</div>                
-        <TextField
-        value={ destinationAddress }
-        onChange={destinationAddressChange}
-        required
-      />
-      
-      <span>{errorMessages.destinationAddress}</span>
-
-      <div>電話番号</div>
-      <TextField
+          <TextField
+            label="電話番号"
+            style={{ width: 250 }}
         value={ destinationTel }
-        onChange={destinationTelChange}
-        required
+        onChange={ destinationTelChange }
       />
       
-      <span>{errorMessages.destinationTel}</span>
+      <div className={classes.error}>{errorMessages.destinationTel}</div>
 
-      <div>配達日時</div>
-      <TextField
-            // fullWidth={props.fullWidth}
-            // margin='dense'
-            // label={props.label}
-            type="date"
-            // required={props.required}
-            // defaultValue={}
-            // InputLabelProps={{
-            //     shrink: true,
-            // }}
-            value={destinationDate}
-            onChange={destinationDateChange}
-      />
-      {/* <DateInput
+      <div className={classes.labelTitle}>配達日時</div>
+          <TextField
+            style={{ width: 180 }}
+        type="date"
         value={ destinationDate }
-        onChange={destinationDateChange}
-        required
-      /> */}
+        onChange={ destinationDateChange }
+      />
         
       <FormControl>
         <Select
+          style={{ width: 70 }}
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={ destinationTime }
-          onChange={destinationTimeChange}
-          required
+          onChange={ destinationTimeChange }
         >
-          <MenuItem value="10">10時</MenuItem>
-          <MenuItem value="11">11時</MenuItem>
-          <MenuItem value="12">12時</MenuItem>
-          <MenuItem value="13">13時</MenuItem>
-          <MenuItem value="14">14時</MenuItem>
-          <MenuItem value="15">15時</MenuItem>
-          <MenuItem value="16">16時</MenuItem>
-          <MenuItem value="17">17時</MenuItem>
-          <MenuItem value="18">18時</MenuItem>
+          <MenuItem value={1}>10時</MenuItem>
+          <MenuItem value={2}>11時</MenuItem>
+          <MenuItem value={3}>12時</MenuItem>
+          <MenuItem value={4}>13時</MenuItem>
+          <MenuItem value={5}>14時</MenuItem>
+          <MenuItem value={6}>15時</MenuItem>
+          <MenuItem value={7}>16時</MenuItem>
+          <MenuItem value={8}>17時</MenuItem>
+          <MenuItem value={9}>18時</MenuItem>
+          <MenuItem value={10}>19時</MenuItem>
+          <MenuItem value={11}>20時</MenuItem>
+          <MenuItem value={12}>21時</MenuItem>
+          <MenuItem value={13}>22時</MenuItem>
+          <MenuItem value={14}>23時</MenuItem>
+          <MenuItem value={15}>24時</MenuItem>
+          <MenuItem value={16}>25時</MenuItem>
+          <MenuItem value={17}>26時</MenuItem>
+          <MenuItem value={18}>27時</MenuItem>
         </Select>
       </FormControl>
 
-      <span>{errorMessages.destinationDateTime}</span>
-
-      <p>お支払い方法</p>
-      <RadioGroup
-        name="paymentMethod"
-        value={paymentMethod}
-        onChange={PaymentMethodChange}
-        required>
+      <div className={classes.error}>{errorMessages.destinationDateTime}</div>
+          
+      <div className={classes.labelTitle}>お支払い方法</div>
+        <RadioGroup
+          SelectedItem
+          row
+          name="paymentMethod"
+          value={ paymentMethod }
+          onChange={PaymentMethodChange}
+        >
         <FormControlLabel value="1" control={<Radio />} label="代金引換" />
         <FormControlLabel value="2" control={<Radio />} label="クレジットカード" />
-        <span>{errorMessages.paymentMethod}</span>
-      </RadioGroup>
+        
+        </RadioGroup>
+        <div className={classes.error}>{errorMessages.paymentMethod}</div>
       
-            
+      {/* クレジットカードが選択された時だけカード番号入力欄を表示 */}
+      { credit }
+
+      </Paper>
+
       <PrimaryButton className={classes.title}
-        label={'この内容で注文する'}
-        onClick={() => {}}
+      label={'この内容で注文する'}
+      onClick={() => link('/order/complete')}
       />
-            
+    
+    </Container>   
     </>
   )
 }
