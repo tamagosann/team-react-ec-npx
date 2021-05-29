@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { Header } from "./components/Header";
 import { db } from "./firebase";
+import { fetchProducts } from "./redux/products/operations";
 import { getProducts } from "./redux/products/selectors";
 import {
   fetchProductsInCart,
@@ -18,12 +19,9 @@ function App() {
   const history = useHistory();
   const selector = useSelector((state) => state);
   const isSignedIn = getIsSignedIn(selector);
-  const ProductsList = getProducts(selector);
+  const productsList = getProducts(selector);
   const uid = getUid(selector);
   const productsInCart = getProductsInCart(selector);
-  console.log(productsInCart);
-  console.log(isSignedIn);
-  console.log(ProductsList);
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -70,6 +68,7 @@ function App() {
   return (
     <>
       <Header cartLength={productsInCart ? productsInCart.length : 0} />
+      <div className="header-space"></div>
       <Router />
     </>
   );

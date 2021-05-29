@@ -1,38 +1,38 @@
 const initialState = {
     products: {
         productsList: [
-            {
-                productId: '0001',
-                productName: 'コーヒー',
-                description: 'おいしいコーヒーです',
-                image: '../src/ffff',
-                size: [
-                    {
-                        size: 's',
-                        price: 500,
-                    },
-                    {
-                        size: 'm',
-                        price: 650,
-                    }
-                ]
-            },
-            {
-                productId: '0002',
-                productName: 'サンドイッチ',
-                description: '具がたくさんのサンドイッチです',
-                image: '../src/ffff',
-                size: [
-                    {
-                        size: 's',
-                        price: 400,
-                    },
-                    {
-                        size: 'm',
-                        price: 500,
-                    },
-                ]
-            }
+            // {
+            //     productId: '0001',
+            //     productName: 'コーヒー',
+            //     description: 'おいしいコーヒーです',
+            //     image: '../src/ffff',
+            //     size: [
+            //         {
+            //             size: 's',
+            //             price: 500,
+            //         },
+            //         {
+            //             size: 'm',
+            //             price: 650,
+            //         }
+            //     ]
+            // },
+            // {
+            //     productId: '0002',
+            //     productName: 'サンドイッチ',
+            //     description: '具がたくさんのサンドイッチです',
+            //     image: '../src/ffff',
+            //     size: [
+            //         {
+            //             size: 's',
+            //             price: 400,
+            //         },
+            //         {
+            //             size: 'm',
+            //             price: 500,
+            //         },
+            //     ]
+            // }
         ],
         toppings: [
             {
@@ -112,7 +112,8 @@ const initialState = {
                 destinationZipcode: 111-1111,
                 destinationAddress: '東京都',
                 destinationTel: '090-8888-8888',
-                destinationTime: '2021-05-10',
+                destinationDate: '2021-05-10',
+                destinationTime: '12-14時',
                 paymentMethod: 1,
                 creditCardNo: '1111-1111-1111-1111',
             },

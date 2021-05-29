@@ -21,3 +21,32 @@ body {
     text-align: center;
 }
 
+.mb-20 {
+    margin-top: 30px;
+}
+
+.p-media__thumb {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+
+    img {
+        position: absolute;
+        object-fit: cover;
+        object-position: center;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+    }
+
+    &::before {
+        content: "";
+        display: block;
+        padding-top: 100%;
+    }
+}
+
+.header-space {
+    margin-bottom: 80px;
+}

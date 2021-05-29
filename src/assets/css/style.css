@@ -19,4 +19,36 @@ body {
 .text-center {
   text-align: center;
 }
+
+.mb-20 {
+  margin-top: 30px;
+}
+
+.p-media__thumb {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.p-media__thumb img {
+  position: absolute;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: center;
+     object-position: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+
+.p-media__thumb::before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+
+.header-space {
+  margin-bottom: 80px;
+}
 /*# sourceMappingURL=style.css.map */

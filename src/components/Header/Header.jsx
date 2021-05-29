@@ -54,7 +54,7 @@ const Header = (props) => {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
+      <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" noWrap onClick={() => link('/')}>
             ECサイト！ 

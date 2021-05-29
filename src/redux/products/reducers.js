@@ -3,9 +3,14 @@ import initialState from '../store/initialState'
 
 export const ProductsReducer = (state = initialState.products, action) => {
     switch (action.type) {
-        case Actions.FETCH_PRODUCTS:
+        case Actions.FETCH_PRODUCTS_ACTION:
             return {
-                ...state, 
+                ...state,
+                productsList: [...action.payload]
+            }
+        case Actions.FETCH_TOPPINGS_ACTION:
+            return {
+                ...state,
                 productsList: [...action.payload]
             }
         default:
