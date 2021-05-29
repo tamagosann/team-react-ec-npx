@@ -18,6 +18,25 @@ export const UsersReducer = (state = initialState.users, action) => {
                 ...state,
                 cart: [...action.payload],
             };
+        case Actions.ADD_TO_CART_ACTION:
+            console.log(('reducersにあるADD_TO_CART_ACTIONが実行されました'));
+            console.log(action)
+            console.log(state);
+            
+            return {
+                ...state,
+                cart: [...state.cart, action.item],
+            };
+        case Actions.REMOVE_FROM_CART_ACTION:
+            console.log(('reducersにあるREMOVE_FROM_CART_ACTIONが実行されました'));
+            console.log(action)
+            console.log(state);
+            const removedCart = [...state.cart]
+            removedCart.splice(action.index, 1)
+            return {
+                ...state,
+                cart: removedCart,
+            };
         default:
             return state
     }
