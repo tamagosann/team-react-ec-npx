@@ -18,3 +18,23 @@ export const fetchProductsInCartAction = (products) => {
         payload: products,
     }
 }
+
+export const ADD_TO_CART_ACTION = 'ADD_TO_CART_ACTION';
+export const addToCartAction = (item) => {
+    console.log(item)
+    console.log('addToCartActionが実行されました');
+    return {
+        type: ADD_TO_CART_ACTION,
+        item: item,
+    }
+}
+export const REMOVE_FROM_CART_ACTION = 'REMOVE_FROM_CART_ACTION';
+export const removeFromCartAction = (item, index) => {
+    console.log('removeFromCartActionが実行されました');
+    return {
+        type: REMOVE_FROM_CART_ACTION,
+        item: item,
+        index: index,
+    }
+}
+

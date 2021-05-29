@@ -1,6 +1,9 @@
 import firebase from 'firebase/app'
 import { auth, db } from '../../firebase';
-import { setUserAction, fetchProductsInCartAction } from './actions';
+import { setUserAction, fetchProductsInCartAction, removeFromCartAction } from './actions';
+import { addToCartAction } from './actions';
+import { useHistory } from 'react-router-dom'
+
 
 export const signIn = () => {
     return async (dispatch) => {
@@ -75,5 +78,32 @@ export const updateProductsInCart = (products) => {
     return async (dispatch) => {
         //処理が全く同じなのでfetchProductsInCartActionを使い回す
         dispatch(fetchProductsInCartAction(products))
+    }
+}
+
+export const addToCart = (item) => {
+    return async (dispatch, getState) => {
+        const uid = getState().users.uid;
+        await db.collection(`users/${uid}/cart`).add(item)
+        dispatch(addToCartAction(item))
+    }
+}
+
+export const removeFromCart = (item, index) => {
+    console.log('firebaseから削除する関数');
+    console.log(item.productId)
+    return async (dispatch, getState) => {
+        const uid = getState().users.uid;
+        const cartItems = []
+        await 
+        // 一度cartコレクションから全部取ってくる
+        db.collection(`users/${uid}/cart`).get().then(snapshot => snapshot.forEach(doc => cartItems.push({...doc.data(), cartId: doc.id})))
+        // 削除する商品をfilterかけて取り出す
+        const filteredItems = cartItems.filter(cartItem => cartItem.productId === item.productId)
+        const itemToDelete = filteredItems[0]
+        // 該当の商品をfirestoreから消す
+        db.doc(`users/${uid}/cart/${itemToDelete.cartId}`).delete()
+        // dispatch
+        dispatch(removeFromCartAction(item, index))
     }
 }
