@@ -10,18 +10,10 @@ import Paper from '@material-ui/core/Paper';
 
 import CardMedia from '@material-ui/core/CardMedia';
 
-//acorditionのimport
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
 //buttonのimport
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import Box from '@material-ui/core/Box';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -41,9 +33,6 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
 
 const useStyles = makeStyles((theme) => ({
   position:{
@@ -53,8 +42,8 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 500,
   },
   media: {
-    width: 130,
-    height: 100,
+    width: 250,
+    height: 180,
   },
   rootpaper: {
     display: 'flex',
@@ -79,12 +68,35 @@ const useStyles = makeStyles((theme) => ({
       color:'red'
   },
   gray:{
+      color:'#808080'
+  },
+  silver:{
       color:'#C0C0C0'
   },
   message: {
     fontWeight: 'bold',
+    fontSize: '16px',
+    position: 'relative',
+  },
+  message2: {
+    fontWeight: 'bold',
     fontSize: '20px',
     position: 'relative',
+  },
+  back:{
+      backgroundColor:'#B0C4DE',
+      fontWeight:'bold',
+      fontSize:'16px',
+  },
+  rootsticky: {
+    width: '95%',
+    margin: theme.spacing(5),
+    // width: theme.spacing(20),
+    // height: theme.spacing(16),
+
+  },
+  container: {
+    maxHeight: 750,
   },
 
 }));  
@@ -101,7 +113,7 @@ const orders= [
             choseToppings: 
                 {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
                     toppingId: 'aaa',
-                    toppingName: 'onion',
+                    toppingName: 'ホイップ',
                     topppingsize: 'M',
                 },//トッピングの数だけこのオブジェクトが続く
             amount: 700, //ここは、注文するときに計算して値を入れる。
@@ -224,6 +236,17 @@ const orders= [
 
 const OrderHistory=()=> {
   const classes = useStyles();
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
     const message={
         unpaid:'未入金',
@@ -233,66 +256,107 @@ const OrderHistory=()=> {
         cancel:'キャンセルされました'
     }
   return (
-    <div className={classes.rootacording}>
-        {orders.length==0 && (<div className={classes.message} align='center'>注文履歴がありません</div>)}
+    <div>
+        {orders.length===0 && (<div className={classes.message} align='center'>注文履歴がありません</div>)}
         {orders.length>0 && (
-            <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="customized table">
+            <Paper className={classes.rootsticky}>
+            <TableContainer component={Paper} className={classes.container}>
+            <Table stickyHeader aria-label="sticky table" className={classes.table} aria-label="customized table">
                 <TableHead>
-                <TableRow>
-                    <StyledTableCell></StyledTableCell>
-                    <StyledTableCell align="center" className={classes.message}>商品</StyledTableCell>
-                    <StyledTableCell align="center" className={classes.message}>お客様情報</StyledTableCell>
-                    <StyledTableCell align="center" className={classes.message}>配送状況</StyledTableCell>
-                    <StyledTableCell align="center"></StyledTableCell>
+                <TableRow align='center'>
+                    <StyledTableCell  className={classes.back}></StyledTableCell>
+                    <StyledTableCell align="center" className={classes.back}>商品</StyledTableCell>
+                    <StyledTableCell align="center" className={classes.back}>お客様情報</StyledTableCell>
+                    <StyledTableCell align="center" className={classes.back}>配送状況</StyledTableCell>
+                    <StyledTableCell align="center" className={classes.back}></StyledTableCell>
 
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {orders.map((order) => (
+                {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((order) => (
                     <>
-                 {order.status>=0 && order.status <9 && (
+                 {order.status>=0 && order.status <10 && (
                     <StyledTableRow key={order.orderId}>
-                    <StyledTableCell component="th" scope="row" align="right">
+                    <StyledTableCell component="th" scope="row" align="center">
                     <CardMedia
                         className={classes.media}
                         image="https://img.cpcdn.com/recipes/4911988/800x800c/aa46163e885ab2571f2e3e70afb0ff6f?u=15300935&p=1518681059"
                         title="Contemplative Reptile"
                     />
                     </StyledTableCell>
-                    <StyledTableCell align="left">
+                    <StyledTableCell>
                         {order.status>=0 && order.status<9 && (
                         <>
-                        <div>{order.product.productName} ({order.product.productSize}) × {order.product.quantity}個</div>
-                        <div>トッピング：{order.product.choseToppings.toppingName} ({order.product.choseToppings.topppingsize})</div>
-                        <div>小計 {order.product.amount}円</div>
+                        <TableRow>
+                            <StyledTableCell className={classes.message}>{order.product.productName}</StyledTableCell>
+                            <StyledTableCell align="right">{ order.product.productSize }</StyledTableCell>
+                            <StyledTableCell align="left" className={classes.message2}>× {order.product.quantity}</StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <StyledTableCell>+ {order.product.choseToppings.toppingName}</StyledTableCell>
+                            <StyledTableCell align="right">{ order.product.choseToppings.topppingsize }</StyledTableCell>
+                            <StyledTableCell align="right"></StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <StyledTableCell></StyledTableCell>
+                            <StyledTableCell align="right">小計</StyledTableCell>
+                            <StyledTableCell align="right" className={classes.message}>{ order.product.amount } 円</StyledTableCell>
+                        </TableRow>
                         </>
                         )}
-                        {order.status === 9 && (
+                        {order.status ===9 && (
                         <>
-                        <div className={classes.gray}>{order.product.productName} ({order.product.productSize}) × {order.product.quantity}個</div>
-                        <div>トッピング：{order.product.choseToppings.toppingName} ({order.product.choseToppings.topppingsize})</div>
-                        <div>小計 {order.product.amount}円</div>
+                        {/* <div className={classes.silver}>{order.product.productName} ({order.product.productSize}) × {order.product.quantity}個</div>
+                        <div className={classes.silver}>トッピング：{order.product.choseToppings.toppingName} ({order.product.choseToppings.topppingsize})</div>
+                        <div className={classes.silver}>小計 {order.product.amount} 円</div> */}
+                        <TableRow>
+                            <StyledTableCell className={classes.message +' '+classes.silver}>{order.product.productName}</StyledTableCell>
+                            <StyledTableCell align="right" className={classes.silver}>{ order.product.productSize }</StyledTableCell>
+                            <StyledTableCell align="left" className={classes.message2 +' '+classes.silver}>× {order.product.quantity}</StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <StyledTableCell className={classes.silver}>+ {order.product.choseToppings.toppingName}</StyledTableCell>
+                            <StyledTableCell align="right" className={classes.silver}>{ order.product.choseToppings.topppingsize }</StyledTableCell>
+                            <StyledTableCell align="right"></StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <StyledTableCell></StyledTableCell>
+                            <StyledTableCell align="right" className={classes.silver}>小計</StyledTableCell>
+                            <StyledTableCell align="right" className={classes.message +' '+classes.silver}>{ order.product.amount } 円</StyledTableCell>
+                        </TableRow>
                         </>
                         )}
                     </StyledTableCell>
-                    <StyledTableCell align="left">
-                    {(order.status==0 || order.status==1) && (
+                    <StyledTableCell align="center">
+                    {(order.status===0 || order.status===1) && (
                         <>
-                        <div>注文日: {order.orderDate}</div>
+                        {/* <div>注文日: {order.orderDate}</div>
                         <div>{order.destinationZipcode}</div>
                         <div>{order.destinationAddress}</div>
-                        <div>{order.destinationTel}</div>
+                        <div>{order.destinationTel}</div> */}
+                        <TableRow>
+                            <StyledTableCell className={classes.position}>注文日 :</StyledTableCell>
+                            <StyledTableCell>{order.orderDate}</StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <StyledTableCell align='center' colSpan={2}>〒 {order.destinationZipcode}</StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <StyledTableCell align='center' colSpan={2}>{order.destinationAddress}</StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <StyledTableCell align='center' colSpan={2}>TEL: {order.destinationTel}</StyledTableCell>
+                        </TableRow>
                         </>
                         )}
                         </StyledTableCell>
                     {/* {orders.filter()=>( */}
-                    <StyledTableCell align="left">
+                    <StyledTableCell align="center">
                         {order.status >=0 && order.status <9 && (
                         <div>配達予定日: {order.destinationTime} </div>
                         )}
                         <div className={classes.message} align='center'>
-                            {order.status===0 && (<span className={classes.red}>{message.unpaid}</span>)}
+                            {order.status===0 && (<span className={classes.red}>{message.unpaid} <div>{order.product.amount}円(税込)</div></span>)}
                             {order.status===1 && message.paid}
                             {order.status===2 && message.sent}
                             {order.status===3 && message.deliveried}
@@ -320,6 +384,7 @@ const OrderHistory=()=> {
                 </TableBody>
             </Table>
             </TableContainer>
+            </Paper>
             )}
     </div>
     )
