@@ -210,7 +210,7 @@ const OrderHistory = () => {
                                 <StyledTableCell align="left" className={classes.message2 +' '+classes.silver}>× {order.quantity}</StyledTableCell>
                             </TableRow>
                             <TableRow>
-                                <StyledTableCell className={classes.silver}>+ {order.toppingName}</StyledTableCell>
+                                <StyledTableCell className={classes.silver}>{order.toppingName}</StyledTableCell>
                                 <StyledTableCell  className={classes.silver} align="right">{ order.topppingsize }</StyledTableCell>
                                 <StyledTableCell align="right"></StyledTableCell>
                             </TableRow>
@@ -223,7 +223,7 @@ const OrderHistory = () => {
                     )}
                   </StyledTableCell>
                   <StyledTableCell align="left">
-                    {(order.status !== CANCEL) && (
+                    {(order.status ==PAID )||(order.status==UNPAID) && (
                       <>
                         <TableRow>
                             <StyledTableCell className={"text-history"+' '+classes.position}>注文日 :</StyledTableCell>
