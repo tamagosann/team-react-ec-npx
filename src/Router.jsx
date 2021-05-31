@@ -5,6 +5,7 @@ import { CartList, LogIn, OrderConfirm, OrderHistory, ProductDetail, ProductList
 import {CartTable} from './components/Cart/index'
 import OrderComplete from "./templates/OrderComplete";
 import ProductEdit from './templates/ProductEdit'
+import AdminOrderHistory from "./templates/AdminOrderHistory";
 
 const Router = () => {
   return (
@@ -17,6 +18,7 @@ const Router = () => {
         <Route exact path={"/order/complete"} component={OrderComplete} />
         <Route exact path={"/order/confirm"} component={OrderConfirm} />
         <Route exact path={"/order/history"} component={OrderHistory} />
+        <Route exact path={"/order/history/admin"} component={AdminOrderHistory} />
         <Route exact path={"/edit"} component={ProductEdit} />
       </Auth>
     </Switch>

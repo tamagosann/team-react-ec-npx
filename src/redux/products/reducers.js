@@ -11,7 +11,7 @@ export const ProductsReducer = (state = initialState.products, action) => {
         case Actions.FETCH_TOPPINGS_ACTION:
             return {
                 ...state,
-                productsList: [...action.payload]
+                toppings: [...action.payload]
             }
         default:
             return state

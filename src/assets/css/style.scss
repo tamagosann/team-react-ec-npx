@@ -21,6 +21,10 @@ body {
     text-align: center;
 }
 
+.mt-20 {
+    margin-top: 20px;
+}
+
 .mb-20 {
     margin-top: 30px;
 }
@@ -49,4 +53,28 @@ body {
 
 .header-space {
     margin-bottom: 80px;
+}
+
+.text-history-products {
+    font-size: 14px;
+}
+
+.text-history {
+    font-size: 13px;
+}
+
+.mb20 {
+    margin-bottom: 20px;
+}
+
+.history-product-price {
+    margin-top: 20px;
+    span {
+        font-weight: bold;
+        background: linear-gradient(to bottom, transparent, transparent 70%, #6d77b1 70%, #6d77b1 100%);
+    }
+}
+
+.vertical-middle {
+    vertical-align: bottom;
 }

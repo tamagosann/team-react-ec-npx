@@ -7,7 +7,6 @@ const HomeSwiper = (props) => {
         pagination: {
             el: '.swiper-pagination',
             type: 'bullets',
-            clickable: true,
             dynamicBullets: true,
         },
         autoplay: {

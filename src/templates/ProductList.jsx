@@ -25,6 +25,7 @@ import { getProducts } from "../redux/products/selectors";
 import { fetchProducts } from "../redux/products/operations";
 import ClearIcon from '@material-ui/icons/Clear';
 import HomeSwiper from "../components/Swiper/HomeSwiper";
+import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles((theme) => ({
   sliderBox: {
@@ -95,7 +96,10 @@ const ProductList = () => {
   const dispatch = useDispatch();
   const [keyword, setKeyword] = useState('');
   const [showingProducts, setShowingProducts] = useState([]);
+  const [currentPageShowingProducts, setCurrentPageShowingProducts] = useState([]);
   const [imgaes, setImages] = useState([]);
+  const [page, setPage] = useState(1)
+  const [pageCount, setPageCount] = useState(1)
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -111,19 +115,14 @@ const ProductList = () => {
 
   const keywordOnChange = useCallback((e) => {
     setKeyword(e.target.value);
-    const newShowingProducts = products.filter(product => {
-      console.log(product.productName.indexOf(e.target.value))
-      return product.productName.indexOf(keyword) >= 0
-    });
-    setShowingProducts(newShowingProducts);
-  },[setKeyword, keyword, products, setShowingProducts]);
+  },[setKeyword]);
 
   const keywordOnClicked = useCallback(() => {
     const newShowingProducts = products.filter(product => {
-      console.log(product.productName.indexOf(keyword))
       return product.productName.indexOf(keyword) >= 0
     });
-    setShowingProducts(newShowingProducts);
+    console.log(newShowingProducts);
+    setShowingProducts([...newShowingProducts]);
   },[keyword, products, setShowingProducts])
 
   const clearSearchInpuut = useCallback(() => {
@@ -131,11 +130,33 @@ const ProductList = () => {
     setShowingProducts(products);
   },[products, setKeyword, setShowingProducts]);
 
+  useEffect(() => {
+    if(showingProducts.length > 9) {
+      const pages = (Math.floor(showingProducts.length / 9) + 1)
+      setPageCount(pages);
+
+      const startProduct = (page * 9 - 9);
+      const lastProduct = startProduct + 9;
+      const newProducts = showingProducts.slice(startProduct, lastProduct);
+      setCurrentPageShowingProducts(newProducts);
+    } else if(showingProducts.length > 0 && showingProducts.length <= 9){
+      setPage(1);
+      setPageCount(1);
+      setCurrentPageShowingProducts(showingProducts);
+    } else if(showingProducts.length === 0) {
+      setPage(1);
+      setPageCount(1);
+      setCurrentPageShowingProducts([]);
+    }
+  },[page, showingProducts, setCurrentPageShowingProducts, setPageCount, setPage])
+
   return (
     <>
+    {imgaes.length > 0 && 
       <div className={classes.sliderBox}>
         <HomeSwiper images={imgaes}/>
       </div>
+    }
       <Paper className={classes.rootsearch}>
         <InputBase
           className={classes.input}
@@ -160,7 +181,7 @@ const ProductList = () => {
         </IconButton>
       </Paper>
       <Grid container justify="center" spacing={0} className={classes.rootgrid}>
-        {showingProducts.length > 0 && showingProducts.map((product, value) => (
+        {currentPageShowingProducts.length > 0 && currentPageShowingProducts.map((product, value) => (
           <Grid key={value} item xs={8} sm={4} className={classes.control}>
             <Card className={classes.rootcard}>
               <CardActionArea
@@ -194,13 +215,23 @@ const ProductList = () => {
             </Card>
           </Grid>
         ))}
-        {showingProducts.length === 0 && (
+        {currentPageShowingProducts.length === 0 && (
           <>
             <p className="mb-20">申し訳ございません、該当する商品がありませんでした</p>
             <p>他の検索キーワードをお試しください</p>
           </>
         )}
       </Grid>
+      <div className="text-center">
+        <Pagination
+          style={{display: "inline-block", marginTop: 20, marginBottom: 30}}
+          count={pageCount}
+          variant="outlined"
+          color="primary"
+          onChange={(e, page) => setPage(page)}
+          page={page}
+        />
+      </div>
     </>
   );
 };

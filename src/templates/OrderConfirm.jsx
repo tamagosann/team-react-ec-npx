@@ -10,6 +10,8 @@ import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router';
 import { Container, Paper, Select, MenuItem } from '@material-ui/core';
 import {Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { order } from '../redux/users/operations';
+import { useDispatch } from 'react-redux';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -58,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 const OrderConfirm = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const link = useCallback((path) => {
     history.push(path)
   },[history]);
@@ -70,7 +73,7 @@ const OrderConfirm = () => {
   const [destinationTel, setDestinationTel] = useState('')
   const [destinationDate, setDestinationDate] = useState('')
   const [destinationTime, setDestinationTime] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState("1 ")
   const [creditCard, setCreditCard] = useState('');
   
   useEffect(() => {
@@ -230,6 +233,33 @@ const OrderConfirm = () => {
     },
   ];
 
+  const cart = [
+    {
+      cartId: '111111',
+      productId: '0001',
+      productName: 'チーズケーキ',
+      url: '../../unko/unko.jpg',
+      productSize: 'm',
+      productPrice: 300,
+      quantity: 2,
+      toppingId: 'aaa',
+      toppingName: 'sermon 多め',
+      toppingPrice: 200,
+    },
+    {
+      cartId: '222222',
+      productId: '0002',
+      url: '../../unko/unko.jpg',
+      productName: 'ショートケーキ',
+      productSize: 'm',
+      productPrice: 300,
+      quantity: 2,
+      toppingId: 'aaa',
+      toppingName: 'sermon 多め',
+      toppingPrice: 200,
+    },
+  ];
+
   return (
     <>
     <Container maxWidth="sm">
@@ -243,8 +273,8 @@ const OrderConfirm = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {SelectedItems.map((SelectedItem) => (
-            <StyledTableRow key={SelectedItem.index}>
+          {SelectedItems.map((SelectedItem, index) => (
+            <StyledTableRow key={index}>
               <StyledTableCell component="th" scope="SelectedItem">
                 <img src={SelectedItem.url} alt="" style={{width:100}}/>
                 <br/>
@@ -399,11 +429,15 @@ const OrderConfirm = () => {
       { credit }
 
       </Paper>
-
+      <div className="text-center">
       <PrimaryButton className={classes.title}
       label={'この内容で注文する'}
-      onClick={() => link('/order/complete')}
+      onClick={() => dispatch(order(cart, destinationName, destinationMail,
+      destinationZipcode, destinationAddress, destinationTel,
+      destinationDate, destinationTime, paymentMethod, creditCard, history
+      ))}
       />
+      </div>
     
     </Container>   
     </>

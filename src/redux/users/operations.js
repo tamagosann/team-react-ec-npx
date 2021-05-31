@@ -1,6 +1,6 @@
 import firebase from 'firebase/app'
-import { auth, db } from '../../firebase';
-import { setUserAction, fetchProductsInCartAction, removeFromCartAction } from './actions';
+import { auth, db, FirebaseTimestamp } from '../../firebase';
+import { setUserAction, fetchProductsInCartAction, removeFromCartAction, fetchOrderHistoryAction } from './actions';
 import { addToCartAction } from './actions';
 import { useHistory } from 'react-router-dom'
 
@@ -107,3 +107,94 @@ export const removeFromCart = (item, index) => {
         dispatch(removeFromCartAction(item, index))
     }
 }
+
+export const order = (cart, destinationName, destinationMail,
+    destinationZipcode, destinationAddress, destinationTel,
+    destinationDate, destinationTime, paymentMethod, creditCard, history) => {
+        return async (dispatch, getState) => {
+            const uid = getState().users.uid;
+            const userRef = db.collection('users').doc(uid);
+            const timestamp = FirebaseTimestamp.now();
+
+            const dateToString = (date) => {
+                return date.getFullYear() + '-'
+                    + ('00' + (date.getMonth() + 1)).slice(-2) + '-'
+                    + ('00' + date.getDate()).slice(-2)
+            
+            };
+
+            const orderDate = dateToString(timestamp.toDate());
+
+            await cart.forEach(cartItem => {
+                const cartItemMemo = userRef.collection('orders').doc();
+
+                const amount = (cartItem.productPrice * cartItem.quantity + cartItem.toppingPrice);
+
+                const orderedItem = {
+                    orderId: cartItemMemo.id,
+                    status: Number(paymentMethod),
+                    destinationName,
+                    destinationMail,
+                    destinationZipcode,
+                    destinationAddress,
+                    destinationTel,
+                    orderDate: orderDate,
+                    destinationDate,
+                    destinationTime,
+                    paymentMethod: Number(paymentMethod),
+                    creditCardNo: creditCard,
+                    productId: cartItem.productId,
+                    productName: cartItem.productName,
+                    url: cartItem.url,
+                    productSize: cartItem.productSize,
+                    quantity: cartItem.quantity,
+                    toppingId: cartItem.toppingId,
+                    toppingName: cartItem.toppingName,
+                    amount: amount,
+                };
+                cartItemMemo.set(orderedItem)
+                //この下の文を復活させればカートが空になる。
+                // userRef.collection('cart').doc(cartItem.cartId).delete();
+            });
+
+    }
+}
+
+export const fetchOrderHistory = () => {
+    return async (dispatch, getState) => {
+        const uid = getState().users.uid;
+        const newOrderHistory = [];
+        await db.collection('users').doc(uid).collection('orders').get()
+            .then(snapshots => {
+                snapshots.forEach(doc => {
+                    newOrderHistory.push(doc.data());
+                })
+            });
+        dispatch(fetchOrderHistoryAction(newOrderHistory))
+    }
+}
+
+export const orderStatusChange = (orderId, newStatus) => {
+    return async (dispatch, getState) => {
+        if(!window.confirm('本当に変更しますか？')) {
+            return false
+        }
+        if(newStatus < 0) {
+            return false;
+        }
+        const uid = getState().users.uid;
+        let orderHistory = getState().users.orders;
+        const index = orderHistory.findIndex(order => {
+            return order.orderId === orderId
+        });
+        let cancelledOrder = orderHistory[index]
+        cancelledOrder.status = newStatus;
+
+        db.collection('users').doc(uid).collection('orders').doc(orderId)
+            .set(cancelledOrder).then(doc => {
+                orderHistory[index] = cancelledOrder;
+                dispatch(fetchOrderHistoryAction(orderHistory));
+            })
+
+    }
+} 
