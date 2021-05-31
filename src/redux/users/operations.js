@@ -81,11 +81,25 @@ export const updateProductsInCart = (products) => {
     }
 }
 
-export const addToCart = (item) => {
+export const addToCart = (selectedSize, selectedPrice, quantity, toppingId, toppingName, toppingPrice, history, chosen) => {
     return async (dispatch, getState) => {
         const uid = getState().users.uid;
-        await db.collection(`users/${uid}/cart`).add(item)
-        dispatch(addToCartAction(item))
+        const cartRef = await db.collection(`users/${uid}/cart`).doc();
+        const newCartItem = {
+            cartId: cartRef.id,
+            productId: chosen.productId,
+            productName: chosen.productName,
+            url: chosen.url,
+            productSize: selectedSize,
+            productPrice: selectedPrice,
+            quantity,
+            toppingId,
+            toppingName,
+            toppingPrice,
+        }
+        cartRef.set(newCartItem);
+        history.push('/')
+        // dispatch(addToCartAction(item))
     }
 }
 

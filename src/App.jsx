@@ -21,11 +21,10 @@ function App() {
   const isSignedIn = getIsSignedIn(selector);
   const productsList = getProducts(selector);
   const uid = getUid(selector);
-  const productsInCart = getProductsInCart(selector);
+  let productsInCart = getProductsInCart(selector);
 
   useEffect(() => {
     if (!isSignedIn) {
-      console.log('きてる')
       dispatch(listenAuthState(history));
     } else {
       dispatch(fetchProductsInCart());
