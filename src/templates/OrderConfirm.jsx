@@ -1,6 +1,7 @@
 import React, { useState, useCallback , useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
-import { PrimaryButton } from "../components/UIKit";
+import { Button } from '@material-ui/core';
+// import { PrimaryButton } from "../components/UIKit";
 import { SecondaryButton } from '../components/UIKit';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -9,7 +10,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router';
 import { Container, Paper, Select, MenuItem } from '@material-ui/core';
-import {Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { order } from '../redux/users/operations';
 import { useDispatch } from 'react-redux';
 
@@ -73,7 +74,7 @@ const OrderConfirm = () => {
   const [destinationTel, setDestinationTel] = useState('')
   const [destinationDate, setDestinationDate] = useState('')
   const [destinationTime, setDestinationTime] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState("1 ")
+  const [paymentMethod, setPaymentMethod] = useState('1')
   const [creditCard, setCreditCard] = useState('');
   
   useEffect(() => {
@@ -138,31 +139,30 @@ const OrderConfirm = () => {
     setCreditCard(e.target.value);
   },[setCreditCard])
 
+  if (!destinationName || !destinationName.match(/\S/g)) {
+    errorMessages.destinationName = '名前を入力して下さい'
+  } 
 
-  if (!destinationName) {
-    errorMessages.destinationName = '名前を入力してください'
-  }
-
-  if (!destinationMail) {
-    errorMessages.destinationMail = 'メールアドレスを入力してください'
+  if (!destinationMail || !destinationMail.match(/\S/g)) {
+    errorMessages.destinationMail = 'メールアドレスを入力して下さい'
   } else if (destinationMail.indexOf('@') === -1) {
     errorMessages.destinationMail = 'メールアドレスの形式が不正です'
   }
 
-  if (!destinationZipcode) {
-    errorMessages.destinationZipcode = '郵便番号を入力してください'
+  if (!destinationZipcode || !destinationZipcode.match(/\S/g)) {
+    errorMessages.destinationZipcode = '郵便番号を入力して下さい'
   } else if (!destinationZipcode.match(/^[0-9]{3}-[0-9]{4}$/)) {
-    errorMessages.destinationZipcode = '郵便番号はXXX-XXXXの形式で入力してください'
+    errorMessages.destinationZipcode = '郵便番号はXXX-XXXXの形式で入力して下さい'
   }
 
-  if(!destinationAddress) {
-    errorMessages.destinationAddress = '住所を入力してください'
+  if(!destinationAddress || !destinationAddress.match(/\S/g)) {
+    errorMessages.destinationAddress = '住所を入力して下さい'
   }
 
-  if (!destinationTel) {
+  if (!destinationTel || !destinationTel.match(/\S/g)) {
     errorMessages.destinationTel = '電話番号を入力して下さい'
   } else if (!destinationTel.match(/\d{1,4}-\d{1,4}-\d{1,4}$/)) {
-    errorMessages.destinationTel = '電話番号はXXXX-XXXX-XXXXの形式で入力してください'
+    errorMessages.destinationTel = '電話番号はXXXX-XXXX-XXXXの形式で入力して下さい'
   }
 
   const selectedDate = new Date(destinationDate);
@@ -170,31 +170,32 @@ const OrderConfirm = () => {
   const makeDateTime = selectedDate.getTime() + additionTime
   const selectedDateTime = new Date(makeDateTime)
   const nowDateTime = new Date();
-  console.log(selectedDateTime)
-  console.log(nowDateTime)
-  console.log(selectedDateTime - nowDateTime)
+  // console.log(selectedDateTime)
+  // console.log(nowDateTime)
+  // console.log(selectedDateTime - nowDateTime)
 
   if (!(destinationDate && destinationTime)) {
     errorMessages.destinationDateTime = '配達日時を入力して下さい'
   } else if (selectedDateTime < nowDateTime) {
     errorMessages.destinationDateTime = '指定日時を既に過ぎています'
   } else if (selectedDateTime - nowDateTime < 3 * 60 * 60 * 1000) {
-    errorMessages.destinationDateTime = '今から3時間以上後の日時をご入力ください'
+    errorMessages.destinationDateTime = '今から3時間以上後の日時をご入力下さい'
   }
 
-  if (!creditCard) {
+  if (!creditCard  || !creditCard.match(/\S/g)) {
     errorMessages.creditCard = 'クレジットカード番号を入力して下さい'
   } else if (!creditCard.match(/\d{4}-\d{4}-\d{4}-\d{4}$/)) {
-    errorMessages.creditCard = 'クレジットカード番号はXXXX-XXXX-XXXX-XXXXの形式で入力してください'
+    errorMessages.creditCard = 'クレジットカード番号はXXXX-XXXX-XXXX-XXXXの形式で入力して下さい'
   }
 
   let credit
 
-  if(!paymentMethod) {
-    errorMessages.paymentMethod = 'お支払い方法を選択してください'
+  if (!paymentMethod) {
+    // 初期値に1を指定してるからありえないけどね
+    errorMessages.paymentMethod = 'お支払い方法を選択して下さい'
   } else if (paymentMethod === '2') {
     credit = (
-    <>
+      <>
         <TextField
           label="クレジットカード番号"
           style={{ width: 250 }}
@@ -282,21 +283,21 @@ const OrderConfirm = () => {
               </StyledTableCell>
 
               <StyledTableCell align="right">         
-                    <TableRow>
-                      <StyledTableCell >サイズ</StyledTableCell>
+                <TableRow>
+                  <StyledTableCell >サイズ</StyledTableCell>
                   <StyledTableCell align="right">{ SelectedItem.productSize }</StyledTableCell>
                   <StyledTableCell align="right">{ SelectedItem.productPrice }円</StyledTableCell>
-                  </TableRow>
-                  <TableRow>
-                      <StyledTableCell>トッピング</StyledTableCell>
+                </TableRow>
+                <TableRow>
+                  <StyledTableCell>トッピング</StyledTableCell>
                   <StyledTableCell align="right">{ SelectedItem.topping }</StyledTableCell>
                   <StyledTableCell align="right">{ SelectedItem.toppingPrice }円</StyledTableCell>
                   </TableRow>
-                  <TableRow>
-                      <StyledTableCell>小計</StyledTableCell>
-                      <StyledTableCell align="right"></StyledTableCell>
+                <TableRow>
+                  <StyledTableCell>小計</StyledTableCell>
+                  <StyledTableCell align="right"></StyledTableCell>
                   <StyledTableCell align="right">{ SelectedItem.productPrice + SelectedItem.toppingPrice }円</StyledTableCell>
-                  </TableRow>
+                </TableRow>
               </StyledTableCell>
 
               <StyledTableCell align="right">
@@ -325,47 +326,47 @@ const OrderConfirm = () => {
       {/* =================お届け先情報================= */}
 
       <Paper variant="outlined" component="div" style={{ padding: 20, marginTop: 40,}}>
-          <h2 className="product-h2">お届け先情報</h2>
-          <TextField
-            label="お名前"
-            style={{ width: 250 }}
+      <h2 className="product-h2">お届け先情報</h2>
+      <TextField
+        label="お名前"
+        style={{ width: 250 }}
         value={destinationName}
         onChange={ destinationNameChange }
       />
       <div className={classes.error}>{ errorMessages.destinationName }</div>
 
-          <TextField
-            label="メールアドレス"
-            style={{ width: 250 }}
+      <TextField
+        label="メールアドレス"
+        style={{ width: 250 }}
         value={ destinationMail }
         onChange={ destinationMailChange }
       />
       <div className={classes.error}>{ errorMessages.destinationMail }</div>
           
-          <TextField
-            label="郵便番号"
-            style={{ width: 250 }}
-          id="zipcode"
-          value={ destinationZipcode }
-          onChange={destinationZipcodeChange}
-          helperText="郵便番号を入力すると住所が表示されます"
-        />
+      <TextField
+        label="郵便番号"
+        style={{ width: 250 }}
+        id="zipcode"
+        value={ destinationZipcode }
+        onChange={destinationZipcodeChange}
+        helperText="郵便番号を入力すると住所が表示されます"
+      />
       
       <div className={classes.error}>{ errorMessages.destinationZipcode }</div>
       
-          <TextField
-            label="住所"
-          id="address"
-          fullWidth
-          value={ destinationAddress }
-          onChange={ destinationAddressChange }
-        />
+      <TextField
+        label="住所"
+        id="address"
+        fullWidth
+        value={ destinationAddress }
+        onChange={ destinationAddressChange }
+      />
       
       <div className={classes.error}>{ errorMessages.destinationAddress }</div>
 
-          <TextField
-            label="電話番号"
-            style={{ width: 250 }}
+      <TextField
+        label="電話番号"
+        style={{ width: 250 }}
         value={ destinationTel }
         onChange={ destinationTelChange }
       />
@@ -373,8 +374,8 @@ const OrderConfirm = () => {
       <div className={classes.error}>{errorMessages.destinationTel}</div>
 
       <div className={classes.labelTitle}>配達日時</div>
-          <TextField
-            style={{ width: 180 }}
+      <TextField
+        style={{ width: 180 }}
         type="date"
         value={ destinationDate }
         onChange={ destinationDateChange }
@@ -388,24 +389,24 @@ const OrderConfirm = () => {
           value={ destinationTime }
           onChange={ destinationTimeChange }
         >
-          <MenuItem value={1}>10時</MenuItem>
-          <MenuItem value={2}>11時</MenuItem>
-          <MenuItem value={3}>12時</MenuItem>
-          <MenuItem value={4}>13時</MenuItem>
-          <MenuItem value={5}>14時</MenuItem>
-          <MenuItem value={6}>15時</MenuItem>
-          <MenuItem value={7}>16時</MenuItem>
-          <MenuItem value={8}>17時</MenuItem>
-          <MenuItem value={9}>18時</MenuItem>
-          <MenuItem value={10}>19時</MenuItem>
-          <MenuItem value={11}>20時</MenuItem>
-          <MenuItem value={12}>21時</MenuItem>
-          <MenuItem value={13}>22時</MenuItem>
-          <MenuItem value={14}>23時</MenuItem>
-          <MenuItem value={15}>24時</MenuItem>
-          <MenuItem value={16}>25時</MenuItem>
-          <MenuItem value={17}>26時</MenuItem>
-          <MenuItem value={18}>27時</MenuItem>
+        <MenuItem value={1}>10時</MenuItem>
+        <MenuItem value={2}>11時</MenuItem>
+        <MenuItem value={3}>12時</MenuItem>
+        <MenuItem value={4}>13時</MenuItem>
+        <MenuItem value={5}>14時</MenuItem>
+        <MenuItem value={6}>15時</MenuItem>
+        <MenuItem value={7}>16時</MenuItem>
+        <MenuItem value={8}>17時</MenuItem>
+        <MenuItem value={9}>18時</MenuItem>
+        <MenuItem value={10}>19時</MenuItem>
+        <MenuItem value={11}>20時</MenuItem>
+        {/* <MenuItem value={12}>21時</MenuItem>
+        <MenuItem value={13}>22時</MenuItem>
+        <MenuItem value={14}>23時</MenuItem>
+        <MenuItem value={15}>24時</MenuItem>
+        <MenuItem value={16}>25時</MenuItem>
+        <MenuItem value={17}>26時</MenuItem>
+        <MenuItem value={18}>27時</MenuItem> */}
         </Select>
       </FormControl>
 
@@ -423,20 +424,46 @@ const OrderConfirm = () => {
         <FormControlLabel value="2" control={<Radio />} label="クレジットカード" />
         
         </RadioGroup>
-        <div className={classes.error}>{errorMessages.paymentMethod}</div>
+      <div className={classes.error}>{errorMessages.paymentMethod}</div>
       
       {/* クレジットカードが選択された時だけカード番号入力欄を表示 */}
       { credit }
-
+ 
       </Paper>
       <div className="text-center">
-      <PrimaryButton className={classes.title}
-      label={'この内容で注文する'}
-      onClick={() => dispatch(order(cart, destinationName, destinationMail,
-      destinationZipcode, destinationAddress, destinationTel,
-      destinationDate, destinationTime, paymentMethod, creditCard, history
-      ))}
-      />
+
+        {/* 元の注文ボタンを一応残しときます  */}
+        {/* <PrimaryButton className={classes.title}
+        label={'この内容で注文する'}
+        onClick={() => dispatch(order(cart, destinationName, destinationMail,
+        destinationZipcode, destinationAddress, destinationTel,
+        destinationDate, destinationTime, paymentMethod, creditCard, history
+        ))}
+        /> */}
+            
+        <Button
+          className={classes.title}
+          variant="contained"
+          color="primary"
+          // === バリデーションをクリアしないと注文ボタンが押せないのが煩わしければ
+          // disabled={ }をコメントアウトしてね！ ===   
+          disabled=
+            { errorMessages.destinationName !== '' ||
+              errorMessages.destinationMail !== '' ||    
+              errorMessages.destinationZipcode !== '' ||      
+              errorMessages.destinationAddress !== '' ||      
+              errorMessages.destinationTel !== '' ||
+              errorMessages.destinationDateTime !== '' ||     
+              errorMessages.paymentMethod !=='' ||
+              (errorMessages.creditCard !=='' && paymentMethod === '2' )
+            }
+          onClick={() => [dispatch(order(cart, destinationName, destinationMail,
+            destinationZipcode, destinationAddress, destinationTel,
+            destinationDate, destinationTime, paymentMethod, creditCard, history
+          )),link('/order/complete')]}
+        >
+          この内容で注文する
+        </Button>
       </div>
     
     </Container>   
