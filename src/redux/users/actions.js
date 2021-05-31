@@ -38,3 +38,19 @@ export const removeFromCartAction = (item, index) => {
     }
 }
 
+export const FETCH_ORDER_HISTORY_ACTION = 'FETCH_ORDER_HISTORY_ACTION';
+export const fetchOrderHistoryAction = (orderHistory) => {
+    return {
+        type: FETCH_ORDER_HISTORY_ACTION,
+        payload: orderHistory,
+    }
+}
+
+export const ORDER_CANCEL_ACTION = 'ORDER_CANCEL_ACTION';
+export const orderCancelAction = (orderHistory) => {
+    return {
+        type: ORDER_CANCEL_ACTION,
+        payload: orderHistory,
+    }
+}
+

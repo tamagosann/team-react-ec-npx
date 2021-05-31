@@ -1,25 +1,23 @@
-import React from 'react';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-
-import CardMedia from '@material-ui/core/CardMedia';
-
-//acorditionのimport
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
+import React, { useCallback, useEffect } from "react";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import CardMedia from "@material-ui/core/CardMedia";
 //buttonのimport
-import Button from '@material-ui/core/Button';
-import DeleteIcon from '@material-ui/icons/Delete';
+import Button from "@material-ui/core/Button";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { useDispatch, useSelector } from "react-redux";
+import { getOrderHistory } from "../redux/users/selectors";
+import { fetchOrderHistory, orderStatusChange } from "../redux/users/operations";
+import { WbIridescentRounded } from "@material-ui/icons";
+import { SecondaryButton } from "../components/UIKit";
+import { Hidden } from "@material-ui/core";
+import { CANCEL, DELIVERED, PAID, SENT, UNPAID } from "../common/status";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -33,7 +31,7 @@ const StyledTableCell = withStyles((theme) => ({
 
 const StyledTableRow = withStyles((theme) => ({
   root: {
-    '&:nth-of-type(odd)': {
+    "&:nth-of-type(odd)": {
       backgroundColor: theme.palette.action.hover,
     },
   },
@@ -44,8 +42,8 @@ function createData(name, calories, fat, carbs, protein) {
 }
 
 const useStyles = makeStyles((theme) => ({
-  position:{
-      align:'center'
+  position: {
+    align: "center",
   },
   table: {
     minWidth: 500,
@@ -55,16 +53,16 @@ const useStyles = makeStyles((theme) => ({
     height: 100,
   },
   rootpaper: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    '& > *': {
+    display: "flex",
+    flexWrap: "wrap",
+    "& > *": {
       margin: theme.spacing(5),
       width: theme.spacing(16),
       height: theme.spacing(16),
     },
   },
   rootacording: {
-    width: '100%',
+    width: "100%",
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -73,237 +71,121 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1),
   },
-  red:{
-      color:'red'
+  red: {
+    color: "#f50057",
   },
   message: {
-    fontWeight: 'bold',
-    fontSize: '20px',
-    position: 'relative',
+    fontWeight: "bold",
+    fontSize: "18px",
+    position: "relative",
   },
+}));
 
-}));  
-
-const orders= [
-    {
-        uid: '1122334455',
-        orderId: 'abcdefg',
-        product : {
-            productName:'エスプレッソ',
-            productId: '0001',
-            productSize: 'M',
-            quantity: 2,
-            choseToppings: 
-                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
-                    toppingId: 'aaa',
-                    toppingName: 'onion',
-                    topppingsize: 'M',
-                },//トッピングの数だけこのオブジェクトが続く
-            amount: 700, //ここは、注文するときに計算して値を入れる。
-        },
-        status: 0,
-        orderDate: '2021-05-04',
-        destinationName: '相澤',
-        destinationZipcode: '111-1111',
-        destinationAddress: '東京都新宿区',
-        destinationTel: '090-8888-8888',
-        destinationTime: '2021-05-10',
-        paymentMethod: 1,
-        creditCardNo: '1111-1111-1111-1111',
-    },
-    {
-        uid: '1122334455',
-        orderId: 'has',
-        product : {
-            productName:'エスプレッソ',
-            productId: '0001',
-            productSize: 'M',
-            quantity: 2,
-            choseToppings: 
-                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
-                    toppingId: 'aaa',
-                    toppingName: 'onion',
-                    topppingsize: 'M',
-                },//トッピングの数だけこのオブジェクトが続く
-            amount: 700, //ここは、注文するときに計算して値を入れる。
-        },
-        status: 1,
-        orderDate: '2021-05-04',
-        destinationName: '相澤',
-        destinationZipcode: '111-1111',
-        destinationAddress: '東京都新宿区',
-        destinationTel: '090-8888-8888',
-        destinationTime: '2021-05-10',
-        paymentMethod: 1,
-        creditCardNo: '1111-1111-1111-1111',
-    },
-    {
-        uid: '1122334455',
-        orderId: 'dfe',
-        product : {
-            productName:'エスプレッソ',
-            productId: '0001',
-            productSize: 'M',
-            quantity: 2,
-            choseToppings: 
-                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
-                    toppingId: 'aaa',
-                    toppingName: 'onion',
-                    topppingsize: 'M',
-                },//トッピングの数だけこのオブジェクトが続く
-            amount: 700, //ここは、注文するときに計算して値を入れる。
-        },
-        status: 2,
-        orderDate: '2021-05-04',
-        destinationName: '相澤',
-        destinationZipcode: '111-1111',
-        destinationAddress: '東京都新宿区',
-        destinationTel: '090-8888-8888',
-        destinationTime: '2021-05-10',
-        paymentMethod: 1,
-        creditCardNo: '1111-1111-1111-1111',
-    },
-    {
-        uid: '1122334455',
-        orderId: 'jfs',
-        product : {
-            productName:'エスプレッソ',
-            productId: '0001',
-            productSize: 'M',
-            quantity: 2,
-            choseToppings: 
-                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
-                    toppingId: 'aaa',
-                    toppingName: 'onion',
-                    topppingsize: 'M',
-                },//トッピングの数だけこのオブジェクトが続く
-            amount: 700, //ここは、注文するときに計算して値を入れる。
-        },
-        status: 3,
-        orderDate: '2021-05-04',
-        destinationName: '相澤',
-        destinationZipcode: '111-1111',
-        destinationAddress: '東京都新宿区',
-        destinationTel: '090-8888-8888',
-        destinationTime: '2021-05-10',
-        paymentMethod: 1,
-        creditCardNo: '1111-1111-1111-1111',
-    },
-    {
-        uid: '1122334455',
-        orderId: 'ufv',
-        product : {
-            productName:'エスプレッソ',
-            productId: '0001',
-            productSize: 'M',
-            quantity: 2,
-            choseToppings: 
-                {//priceは、amountで合計金額出すからいらなそうじゃないかあああ？
-                    toppingId: 'aaa',
-                    toppingName: 'onion',
-                    topppingsize: 'M',
-                },//トッピングの数だけこのオブジェクトが続く
-            amount: 700, //ここは、注文するときに計算して値を入れる。
-        },
-        status: 9,
-        orderDate: '2021-05-04',
-        destinationName: '相澤',
-        destinationZipcode: '111-1111',
-        destinationAddress: '東京都新宿区',
-        destinationTel: '090-8888-8888',
-        destinationTime: '2021-05-10',
-        paymentMethod: 1,
-        creditCardNo: '1111-1111-1111-1111',
-    },
-]
-
-const OrderHistory=()=> {
+const OrderHistory = () => {
   const classes = useStyles();
+  const selector = useSelector((state) => state);
+  const orderHistory = getOrderHistory(selector);
+  const dispatch = useDispatch();
+  console.log(orderHistory);
 
-    const message={
-        unpaid:'未入金',
-        paid:'入金済',
-        sent:'発送済',
-        deliveried:'配達済',
-        cancel:'キャンセルされました'
+  useEffect(() => {
+    dispatch(fetchOrderHistory());
+  }, []);
+
+  const getStatusInJapanese = useCallback((status) => {
+    if(status === UNPAID) {
+        return <span className={classes.red}>未入金</span>
+    } else if(status === PAID) {
+        return '入金済'
+    } else if (status === SENT) {
+        return '発送済'
+    } else if (status === DELIVERED) {
+        return '配送済'
+    } else if (status === CANCEL) {
+        return <span className={classes.red}>キャンセル済</span>
     }
+  },[])
+
   return (
     <div className={classes.rootacording}>
-        {orders.length==0 && (<div className={classes.message} align='center'>注文履歴がありません</div>)}
-        {orders.length>0 && (
-            <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="customized table">
-                <TableHead>
-                <TableRow>
-                    <StyledTableCell></StyledTableCell>
-                    <StyledTableCell align="center" className={classes.message}>商品</StyledTableCell>
-                    <StyledTableCell align="center" className={classes.message}>お客様情報</StyledTableCell>
-                    <StyledTableCell align="center" className={classes.message}>配送状況</StyledTableCell>
-                    <StyledTableCell align="center"></StyledTableCell>
-
-                </TableRow>
-                </TableHead>
-                <TableBody>
-                {orders.map((order) => (
-                
-                    <StyledTableRow key={order.orderId}>
-                    <StyledTableCell component="th" scope="row" align="right">
+      {orderHistory.length === 0 && (
+        <div className={classes.message} align="center">
+          注文履歴がありません
+        </div>
+      )}
+      {orderHistory.length > 0 && (
+        <TableContainer component={Paper} style={{width: 800, overflowX: 'scroll', margin: '0 auto'}}>
+          <Table className={classes.table} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell></StyledTableCell>
+                <StyledTableCell align="center" className={classes.message}>
+                  商品
+                </StyledTableCell>
+                <StyledTableCell align="center" className={classes.message}>
+                  お客様情報
+                </StyledTableCell>
+                <StyledTableCell align="center" className={classes.message}>
+                  配送状況
+                </StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orderHistory.map((order) => (
+                <StyledTableRow key={order.orderId}>
+                  {/* <Hidden xsDown> */}
+                  <StyledTableCell component="th" scope="row" align="right">
                     <CardMedia
-                        className={classes.media}
-                        image="https://img.cpcdn.com/recipes/4911988/800x800c/aa46163e885ab2571f2e3e70afb0ff6f?u=15300935&p=1518681059"
-                        title="Contemplative Reptile"
+                      className={classes.media}
+                      image={order.url}
+                      title="Contemplative Reptile"
                     />
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                        <div>{order.product.productName} ({order.product.productSize}) × {order.product.quantity}個</div>
-                        <div>トッピング：{order.product.choseToppings.toppingName} ({order.product.choseToppings.topppingsize})</div>
-                        <div>小計 {order.product.amount}円</div>
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                    {(order.status==0 || order.status==1) && (
-                        <>
-                        <div>注文日: {order.orderDate}</div>
-                        <div>{order.destinationZipcode}</div>
-                        <div>{order.destinationAddress}</div>
-                        <div>{order.destinationTel}</div>
-                        </>
-                        )}
-                        </StyledTableCell>
-                    {/* {orders.filter()=>( */}
-                    <StyledTableCell align="left">
-                        {order.status >=0 && order.status <9 && (
-                        <div>配達予定日: {order.destinationTime} </div>
-                        )}
-                        <div className={classes.message} align='center'>
-                            {order.status===0 && (<span className={classes.red}>{message.unpaid}</span>)}
-                            {order.status===1 && message.paid}
-                            {order.status===2 && message.sent}
-                            {order.status===3 && message.deliveried}
-                            {order.status===9 && (<span className={classes.red}>{message.cancel}</span>)}
-                        </div>
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                    {order.status===0 && (
-                    <Button
-                    size="small"
-                    variant="contained"
-                    color="secondary"
-                    className={classes.button}
-                    startIcon={<DeleteIcon />}
-                    align="right"
-                >キャンセル
-                </Button>
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
+                    <div className={"text-history-products"}>
+                      {order.productName} {order.productSize} ×{" "}
+                      {order.quantity}個
+                    </div>
+                    <div className={"text-history-products"}>
+                      トッピング：{order.toppingName}
+                    </div>
+                    <div className={"text-center history-product-price"}><span>小計 {order.amount.toLocaleString()}円</span></div>
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
+                    {(order.status !== CANCEL) && (
+                      <>
+                        <div className={"text-history"}>注文日: {order.orderDate}</div>
+                        <div className={"text-history"}>郵便番号: {order.destinationZipcode}</div>
+                        <div className={"text-history"}>お届け先住所: {order.destinationAddress}</div>
+                        <div className={"text-history"}>電話番号: {order.destinationTel}</div>
+                      </>
                     )}
-                    </StyledTableCell>
-                      </StyledTableRow>
-                ))}
-                </TableBody>
-            </Table>
-            </TableContainer>
-            )}
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
+                    {order.status !== CANCEL && (
+                      <div className={"text-history mb20"}>配達予定日: {order.destinationDate} </div>
+                    )}
+                    <div className={classes.message} align="center">
+                      {getStatusInJapanese(order.status)}
+                    </div>
+                      {order.status === UNPAID && (
+                        <div className={"mt-20"}>
+                          <SecondaryButton label={"注文をキャンセルする"} onClick={() => dispatch(orderStatusChange(order.orderId, CANCEL))} />
+                        </div>
+                      )}
+                  </StyledTableCell>
+                  {/* </Hidden> */}
+                  <Hidden xsUp>
+                    a
+                  </Hidden> 
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </div>
-    )
-}
+  );
+};
 
 export default OrderHistory;
-
