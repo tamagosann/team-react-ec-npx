@@ -212,7 +212,7 @@ const ProductDetail = () => {
                     </Grid>
                     <h3 className="product-h3">合計金額</h3>
                     <Typography>
-                        {((selectedPrice * quantity) + toppingPrice).toLocaleString()}円
+                        {((selectedPrice * quantity) + (toppingPrice * quantity)).toLocaleString()}円
                     </Typography>
                     <Typography>
                         <div className={'text-center'}>
