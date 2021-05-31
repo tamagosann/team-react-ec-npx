@@ -223,7 +223,7 @@ const OrderHistory = () => {
                     )}
                   </StyledTableCell>
                   <StyledTableCell align="left">
-                    {(order.status ==PAID )||(order.status==UNPAID) && (
+                    {(order.status ==PAID || order.status==UNPAID) && (
                       <>
                         <TableRow>
                             <StyledTableCell className={"text-history"+' '+classes.position}>注文日 :</StyledTableCell>
