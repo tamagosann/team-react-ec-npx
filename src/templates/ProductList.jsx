@@ -217,8 +217,7 @@ const ProductList = () => {
         ))}
         {currentPageShowingProducts.length === 0 && (
           <>
-            <p className="mb-20">申し訳ございません、該当する商品がありませんでした</p>
-            <p>他の検索キーワードをお試しください</p>
+            <p className="mb-20">該当する商品はありません</p>
           </>
         )}
       </Grid>

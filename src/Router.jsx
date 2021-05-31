@@ -11,12 +11,12 @@ const Router = () => {
   return (
     <Switch>
       <Route exact path={"/login"} component={LogIn} />
-      <Auth>
         <Route exact path={"(/)?"} component={ProductList} />
         <Route exact path={"/product/:productId"} component={ProductDetail} />
         <Route exact path={"/cart"} component={CartTable} />
-        <Route exact path={"/order/complete"} component={OrderComplete} />
+      <Auth>
         <Route exact path={"/order/confirm"} component={OrderConfirm} />
+        <Route exact path={"/order/complete"} component={OrderComplete} />
         <Route exact path={"/order/history"} component={OrderHistory} />
         <Route exact path={"/order/history/admin"} component={AdminOrderHistory} />
         <Route exact path={"/edit"} component={ProductEdit} />

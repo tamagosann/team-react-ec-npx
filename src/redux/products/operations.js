@@ -22,7 +22,8 @@ export const fetchToppings = () => {
         await db.collection('products').doc('FeKpGj7gUgt7dvFmbWIU').collection('toppings')
             .get().then(snapshot => {
             snapshot.forEach(doc => toppings.push(doc.data()))
-        })
+        });
+        toppings.sort((x, y) => x.toppingName.localeCompare(y.toppingName, 'ja'));
         dispatch(fetchToppingsAction(toppings))
     }
 }
