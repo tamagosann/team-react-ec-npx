@@ -200,8 +200,18 @@ const OrderHistory = () => {
                             </TableRow>
                             <TableRow>
                                 <StyledTableCell></StyledTableCell>
+                                <StyledTableCell align="right">消費税</StyledTableCell>
+                                <StyledTableCell align="right" className={"text-center history-product-price" +' '+classes.message}>{Math.floor(order.amount * 0.1).toLocaleString()} 円</StyledTableCell>
+                            </TableRow>
+                            <TableRow>
+                                <StyledTableCell></StyledTableCell>
                                 <StyledTableCell align="right">小計</StyledTableCell>
                                 <StyledTableCell align="right" className={"text-center history-product-price" +' '+classes.message}>{order.amount.toLocaleString()} 円</StyledTableCell>
+                            </TableRow>
+                            <TableRow>
+                                <StyledTableCell></StyledTableCell>
+                                <StyledTableCell align="right">合計</StyledTableCell>
+                                <StyledTableCell align="right" className={"text-center history-product-price" +' '+classes.message}>{Math.floor(order.amount * 1.1).toLocaleString()} 円</StyledTableCell>
                             </TableRow>
                             </>
                     )}
@@ -219,8 +229,18 @@ const OrderHistory = () => {
                             </TableRow>
                             <TableRow>
                                 <StyledTableCell></StyledTableCell>
+                                <StyledTableCell align="right" className={classes.silver}>消費税</StyledTableCell>
+                                <StyledTableCell align="right" className={"text-center history-product-price" +' '+classes.message+' '+classes.silver}>{Math.floor(order.amount * 0.1).toLocaleString()} 円</StyledTableCell>
+                            </TableRow>
+                            <TableRow>
+                                <StyledTableCell></StyledTableCell>
                                 <StyledTableCell align="right" className={classes.silver}>小計</StyledTableCell>
                                 <StyledTableCell align="right" className={"text-center history-product-price" +' '+classes.message+' '+classes.silver}>{order.amount.toLocaleString()} 円</StyledTableCell>
+                            </TableRow>
+                            <TableRow>
+                                <StyledTableCell></StyledTableCell>
+                                <StyledTableCell align="right" className={classes.silver}>合計</StyledTableCell>
+                                <StyledTableCell align="right" className={"text-center history-product-price" +' '+classes.message+' '+classes.silver}>{Math.floor(order.amount * 1.1).toLocaleString()} 円</StyledTableCell>
                             </TableRow>
                             </>
                     )}
