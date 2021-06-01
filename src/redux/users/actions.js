@@ -20,21 +20,17 @@ export const fetchProductsInCartAction = (products) => {
 }
 
 export const ADD_TO_CART_ACTION = 'ADD_TO_CART_ACTION';
-export const addToCartAction = (item) => {
-    console.log(item)
-    console.log('addToCartActionが実行されました');
+export const addToCartAction = (cart) => {
     return {
         type: ADD_TO_CART_ACTION,
-        item: item,
+        payload: cart,
     }
 }
 export const REMOVE_FROM_CART_ACTION = 'REMOVE_FROM_CART_ACTION';
-export const removeFromCartAction = (item, index) => {
-    console.log('removeFromCartActionが実行されました');
+export const removeFromCartAction = (cart) => {
     return {
         type: REMOVE_FROM_CART_ACTION,
-        item: item,
-        index: index,
+        payload: cart,
     }
 }
 
@@ -51,6 +47,14 @@ export const orderCancelAction = (orderHistory) => {
     return {
         type: ORDER_CANCEL_ACTION,
         payload: orderHistory,
+    }
+}
+
+export const LOGOUT_USER_ACTION = 'LOGOUT_USER_ACTION';
+
+export const logOutUserAction = () => {
+    return {
+        type: LOGOUT_USER_ACTION,
     }
 }
 

@@ -1,6 +1,6 @@
-import React, { useState, useCallback , useEffect } from 'react';
+import React, { useState, useCallback , useEffect, useMemo } from 'react';
 import TextField from '@material-ui/core/TextField';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 // import { PrimaryButton } from "../components/UIKit";
 import { SecondaryButton } from '../components/UIKit';
 import Radio from '@material-ui/core/Radio';
@@ -11,8 +11,10 @@ import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router';
 import { Container, Paper, Select, MenuItem } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
-import { order } from '../redux/users/operations';
-import { useDispatch } from 'react-redux';
+import { order, removeFromCart } from '../redux/users/operations';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProductsInCart, getUid } from '../redux/users/selectors';
+import { getProducts } from '../redux/products/selectors';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -56,6 +58,35 @@ const useStyles = makeStyles((theme) => ({
   error: {
     color: '#f44336',
     fontSize: '15px'
+  },
+  rootcard: {
+    Width: 345,
+  },
+  rootgrid: {
+    flexGrow: 1,
+    // grid-template-rows: '100px';
+  },
+  paper: {
+    height: 140,
+    width: 100,
+  },
+  control: {
+    padding: theme.spacing(2),
+  },
+  media: {
+    height: 145,
+  },
+  flex: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  links: {
+    underline: "none",
+  },
+  container: {
+    width: 700,
+    overflowX: 'scroll', 
+    margin: '0 auto'
   }
 }));
 
@@ -65,8 +96,26 @@ const OrderConfirm = () => {
   const link = useCallback((path) => {
     history.push(path)
   },[history]);
-
   const classes = useStyles();
+  const selector = useSelector((state) => state);
+  const cart = getProductsInCart(selector);
+  const uid = getUid(selector);
+  const productsList = getProducts(selector);
+
+  const sum = useMemo(() => {
+    if(cart.length > 0) {
+      let prices = []; 
+      cart.forEach((cartItem) => {
+        const price = cartItem.productPrice * cartItem.quantity + cartItem.toppingPrice * cartItem.quantity;
+        prices.push(price);
+      });
+      const sumPrice = prices.reduce((a, b) => a + b)
+      return sumPrice;
+    } else {
+      return 0
+    }
+  },[cart])
+
   const [destinationName, setDestinationName] = useState('')
   const [destinationMail, setDestinationMail] = useState('')
   const [destinationZipcode, setDestinationZipcode] = useState('')
@@ -207,120 +256,96 @@ const OrderConfirm = () => {
     )
   }
 
-  const SelectedItems = [
-    {
-      url:'https://firebasestorage.googleapis.com/v0/b/team-react-ec-npx.appspot.com/o/16.jpg?alt=media&token=fc210a54-369b-4689-bddd-6ff069d8147c',
-      name:'商品1',
-      productSize:'S',
-      productPrice: 400,
-      topping: 'ミルクM',
-      toppingPrice: 300
-    },
-    {
-      url:'https://firebasestorage.googleapis.com/v0/b/team-react-ec-npx.appspot.com/o/16.jpg?alt=media&token=fc210a54-369b-4689-bddd-6ff069d8147c',
-      name:'商品2',
-      productSize:'M',
-      productPrice: 600,
-      topping: '蜂蜜S',
-      toppingPrice: 200
-    },
-    {
-    url:'https://firebasestorage.googleapis.com/v0/b/team-react-ec-npx.appspot.com/o/16.jpg?alt=media&token=fc210a54-369b-4689-bddd-6ff069d8147c',
-    name:'商品3',
-    productSize:'S',
-    productPrice: 500,
-    topping: 'ホイップM',
-    toppingPrice: 300
-    },
-  ];
-
-  const cart = [
-    {
-      cartId: '111111',
-      productId: '0001',
-      productName: 'チーズケーキ',
-      url: '../../unko/unko.jpg',
-      productSize: 'm',
-      productPrice: 300,
-      quantity: 2,
-      toppingId: 'aaa',
-      toppingName: 'sermon 多め',
-      toppingPrice: 200,
-    },
-    {
-      cartId: '222222',
-      productId: '0002',
-      url: '../../unko/unko.jpg',
-      productName: 'ショートケーキ',
-      productSize: 'm',
-      productPrice: 300,
-      quantity: 2,
-      toppingId: 'aaa',
-      toppingName: 'sermon 多め',
-      toppingPrice: 200,
-    },
-  ];
-
   return (
     <>
-    <Container maxWidth="sm">
-        
-    <Table aria-label="customized table" style={{ padding: 20, marginTop: 40,}}>
-        <TableHead>
-          <TableRow>
-            <StyledTableCell align="center">商品</StyledTableCell>
-            <StyledTableCell align="center">内訳</StyledTableCell>
-            <StyledTableCell align="center">商品を削除</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {SelectedItems.map((SelectedItem, index) => (
-            <StyledTableRow key={index}>
-              <StyledTableCell component="th" scope="SelectedItem">
-                <img src={SelectedItem.url} alt="" style={{width:100}}/>
-                <br/>
-                {SelectedItem.name}
-              </StyledTableCell>
+    <Container>
+    {cart.length > 0 && (
+        <Table
+          aria-label="customized table"
+          style={{ padding: 20, marginTop: 40}}
+          className={classes.container}
+        >
+          <TableHead>
+            <TableRow>
+              <StyledTableCell align="center">商品</StyledTableCell>
+              <StyledTableCell align="center">内訳</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {cart.map((SelectedItem) => (
+              <StyledTableRow key={SelectedItem.cartId}>
+                <StyledTableCell component="th" scope="SelectedItem">
+                  <img src={SelectedItem.url} alt="商品画像" style={{ width: 200 }} />
+                  <br />
+                  <Typography>
+                    {SelectedItem.productName}
+                  </Typography>
+                </StyledTableCell>
 
-              <StyledTableCell align="right">         
-                <TableRow>
-                  <StyledTableCell >サイズ</StyledTableCell>
-                  <StyledTableCell align="right">{ SelectedItem.productSize }</StyledTableCell>
-                  <StyledTableCell align="right">{ SelectedItem.productPrice }円</StyledTableCell>
-                </TableRow>
-                <TableRow>
-                  <StyledTableCell>トッピング</StyledTableCell>
-                  <StyledTableCell align="right">{ SelectedItem.topping }</StyledTableCell>
-                  <StyledTableCell align="right">{ SelectedItem.toppingPrice }円</StyledTableCell>
+                <StyledTableCell align="right">
+                  <TableRow>
+                    <StyledTableCell>サイズ</StyledTableCell>
+                    <StyledTableCell align="right">
+                      {SelectedItem.productSize}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {SelectedItem.productPrice}円
+                    </StyledTableCell>
                   </TableRow>
-                <TableRow>
-                  <StyledTableCell>小計</StyledTableCell>
-                  <StyledTableCell align="right"></StyledTableCell>
-                  <StyledTableCell align="right">{ SelectedItem.productPrice + SelectedItem.toppingPrice }円</StyledTableCell>
-                </TableRow>
-              </StyledTableCell>
 
-              <StyledTableCell align="right">
-                <SecondaryButton
-                  label={'削除'}
-                  onClick={() => {}}
-                />
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
+                  <TableRow>
+                    <StyledTableCell>個数</StyledTableCell>
+                    <StyledTableCell align="right">
+                      {SelectedItem.quantity}
+                    </StyledTableCell>
+                    <StyledTableCell align="right"></StyledTableCell>
+                  </TableRow>
+
+                  <TableRow>
+                    <StyledTableCell>トッピング</StyledTableCell>
+                    <StyledTableCell align="right">
+                      {SelectedItem.toppingName}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {SelectedItem.toppingPrice}円
+                    </StyledTableCell>
+                  </TableRow>
+
+                  <TableRow>
+                    <StyledTableCell>小計</StyledTableCell>
+                    <StyledTableCell align="right"></StyledTableCell>
+                      <StyledTableCell align="right">
+                        {((SelectedItem.productPrice * SelectedItem.quantity) +
+                          (SelectedItem.toppingPrice * SelectedItem.quantity)).toLocaleString()}
+                        円
+                      </StyledTableCell>
+                  </TableRow>
+                </StyledTableCell>
+              </StyledTableRow>
+            ))}
+          </TableBody>
         </Table>
-        
-      {/* =================合計金額================= */}
+        )}
 
-      <Paper variant="outlined" component="div" style={{ padding: 20, marginTop: 40, }}>
-        <h1 align="center">
-          消費税： { Math.floor(5000 * 0.1).toLocaleString() }円
-        </h1>
-        <h1 align="center">
-          ご注文合計金額:
-          { Math.floor(5000 * 1.1).toLocaleString() }円(税込)
-        </h1>    
+        <Paper
+          variant="outlined"
+          component="div"
+          style={{ padding: 20, marginTop: 40 }}
+        >
+          { cart.length > 0 && (
+            <>
+              <h1 align="center">
+                消費税： { Math.floor(sum * 0.1).toLocaleString() }円
+              </h1>
+              <h1 align="center">
+                ご注文合計金額:
+                {sum.toLocaleString()}円(税込)
+              </h1>
+            </>
+          )}
+          { cart.length === 0 && (
+            <div className="text-center">カートに商品がありません。</div>
+          )}
         </Paper>
         
       {/* =================お届け先情報================= */}
@@ -460,7 +485,7 @@ const OrderConfirm = () => {
           onClick={() => [dispatch(order(cart, destinationName, destinationMail,
             destinationZipcode, destinationAddress, destinationTel,
             destinationDate, destinationTime, paymentMethod, creditCard, history
-          )),link('/order/complete')]}
+          ))]}
         >
           この内容で注文する
         </Button>

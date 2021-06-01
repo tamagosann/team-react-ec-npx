@@ -1,6 +1,6 @@
 import firebase from 'firebase/app'
 import { auth, db, FirebaseTimestamp } from '../../firebase';
-import { setUserAction, fetchProductsInCartAction, removeFromCartAction, fetchOrderHistoryAction } from './actions';
+import { setUserAction, fetchProductsInCartAction, removeFromCartAction, fetchOrderHistoryAction, logOutUserAction } from './actions';
 import { addToCartAction } from './actions';
 import { useHistory } from 'react-router-dom'
 
@@ -15,11 +15,7 @@ export const signIn = () => {
 export const signOut = () => {
     return async (dispatch) => {
         auth.signOut();
-        dispatch(setUserAction({
-            uid: null,
-            username: '',
-            isSignedIn: false,
-        }))
+        dispatch(logOutUserAction())
     }
 }
 
@@ -30,22 +26,17 @@ export const listenAuthState = (history) => {
                 console.log(user)
                 const uid = user.uid;
                 const username = user.displayName;
+                const email = user.email
                 const loginUser = {
                     uid: uid,
                     isSignedIn: true,
                     username: username,
+                    email: email,
                 }
                 console.log(loginUser)
                 dispatch(setUserAction(loginUser));
-                if(history.location.path === '/login') {
-                    history.push('/')
-                }
             } else {
-                setUserAction({
-                    uid: null,
-                    username: '',
-                    isSignedIn: false,
-                });
+                dispatch(logOutUserAction());
             }
         })
     }
@@ -84,32 +75,59 @@ export const updateProductsInCart = (products) => {
 export const addToCart = (selectedSize, selectedPrice, quantity, toppingId, toppingName, toppingPrice, history, chosen) => {
     return async (dispatch, getState) => {
         const uid = getState().users.uid;
-        const cartRef = await db.collection(`users/${uid}/cart`).doc();
-        const newCartItem = {
-            cartId: cartRef.id,
-            productId: chosen.productId,
-            productName: chosen.productName,
-            url: chosen.url,
-            productSize: selectedSize,
-            productPrice: selectedPrice,
-            quantity,
-            toppingId,
-            toppingName,
-            toppingPrice,
+        const isSignedIn = getState().users.isSignedIn;
+        let cart = getState().users.cart;
+
+        if(isSignedIn) {
+            const cartRef = await db.collection(`users/${uid}/cart`).doc();
+            const newCartItem = {
+                cartId: cartRef.id,
+                productId: chosen.productId,
+                productName: chosen.productName,
+                url: chosen.url,
+                productSize: selectedSize,
+                productPrice: selectedPrice,
+                quantity,
+                toppingId,
+                toppingName,
+                toppingPrice,
+            }
+            cartRef.set(newCartItem);
+            history.push('/')
+        } else {
+            const newCartItem = {
+                cartId: '',
+                productId: chosen.productId,
+                productName: chosen.productName,
+                url: chosen.url,
+                productSize: selectedSize,
+                productPrice: selectedPrice,
+                quantity,
+                toppingId,
+                toppingName,
+                toppingPrice,
+            };
+            cart.push(newCartItem);
+            dispatch(addToCartAction(cart))
+            history.push('/')
         }
-        cartRef.set(newCartItem);
-        history.push('/')
-        // dispatch(addToCartAction(item))
     }
 }
 
-export const removeFromCart = (cartId) => {
+export const removeFromCart = (cartId, index) => {
     return async (dispatch, getState) => {
         if(!window.confirm('本当にカートから消去しますか？')) {
             return false;
         }
+        const isSignedIn = getState().users.isSignedIn;
         const uid = getState().users.uid;
-        await db.collection(`users/${uid}/cart`).doc(cartId).delete()
+        let cart = getState().users.cart;
+        if(isSignedIn) {
+            await db.collection(`users/${uid}/cart`).doc(cartId).delete()
+        } else {
+            cart.splice(index, 1);
+            dispatch(removeFromCartAction(cart))
+        }
     }
 }
 
@@ -158,8 +176,7 @@ export const order = (cart, destinationName, destinationMail,
                     amount: amount,
                 };
                 cartItemMemo.set(orderedItem)
-                //この下の文を復活させればカートが空になる。
-                // userRef.collection('cart').doc(cartItem.cartId).delete();
+                userRef.collection('cart').doc(cartItem.cartId).delete();
             });
 
     }
@@ -203,3 +220,12 @@ export const orderStatusChange = (orderId, newStatus) => {
 
     }
 } 
+
+export const noLoginAddToCart = (noLoginCartItem) => {
+    return async (dispatch, getState) => {
+        const uid = getState().users.uid;
+        const cartRef = db.collection(`users/${uid}/cart`).doc();
+        noLoginCartItem.cartId = cartRef.id;
+        cartRef.set(noLoginCartItem);
+    }
+}

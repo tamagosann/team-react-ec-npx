@@ -11,7 +11,8 @@ const Auth = ({ children }) => {
 
     useEffect(() => {
         if(!isSignedIn) {
-            // history.push('/')
+            console.log('ほむに戻します')
+            history.push('/')
         }
     }, [isSignedIn])
 

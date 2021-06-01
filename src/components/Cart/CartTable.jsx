@@ -11,9 +11,10 @@ import { Container, Paper } from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
 import PrimaryButton from "../UIKit/PrimaryButton";
 import SecondaryButton from "../UIKit/SecondaryButton";
-import { removeFromCart } from "../../redux/users/operations";
-import { getProductsInCart, getUid } from "../../redux/users/selectors";
+import { addToCart, noLoginAddToCart, removeFromCart, signIn } from "../../redux/users/operations";
+import { getIsSignedIn, getProductsInCart, getUid } from "../../redux/users/selectors";
 import { getProducts } from "../../redux/products/selectors";
+import { useHistory } from "react-router";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -58,15 +59,22 @@ const useStyles = makeStyles((theme) => ({
   links: {
     underline: "none",
   },
+  container: {
+    width: 700,
+    overflowX: 'scroll', 
+    margin: '0 auto'
+  }
 }));
 
 const CartTable = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const selector = useSelector((state) => state);
   const cart = getProductsInCart(selector);
   const uid = getUid(selector);
   const productsList = getProducts(selector);
+  const isSignedIn = getIsSignedIn(selector);
 
   const sum = useMemo(() => {
     if(cart.length > 0) {
@@ -82,6 +90,32 @@ const CartTable = () => {
     }
   },[cart])
 
+  useEffect(() => {
+    if(isSignedIn && uid) {
+      let noLoginCart = JSON.parse(
+        localStorage.getItem('nologincart') || '[]'
+      );
+      localStorage.setItem('nologincart', JSON.stringify([]));
+      
+      if (noLoginCart.length > 0) {
+        console.log(noLoginCart);
+        noLoginCart.forEach(cartItem => {
+          dispatch(noLoginAddToCart(cartItem))
+        })
+        history.push('/order/confirm')
+      }
+    }
+  },[isSignedIn, uid])
+
+  const goToOrderClicked = () => {
+    if(isSignedIn) {
+      history.push('/order/confirm')
+    } else {
+      localStorage.setItem('nologincart', JSON.stringify(cart));
+      dispatch(signIn());
+    }
+  };
+
   return (
     <React.Fragment>
       <Container maxWidth="sm">
@@ -89,6 +123,7 @@ const CartTable = () => {
         <Table
           aria-label="customized table"
           style={{ padding: 20, marginTop: 40 }}
+          className={classes.container}
         >
           <TableHead>
             <TableRow>
@@ -98,7 +133,7 @@ const CartTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {cart.map((SelectedItem) => (
+            {cart.map((SelectedItem, index) => (
               <StyledTableRow key={SelectedItem.cartId}>
                 <StyledTableCell component="th" scope="SelectedItem">
                   <img src={SelectedItem.url} alt="商品画像" style={{ width: 100 }} />
@@ -149,7 +184,7 @@ const CartTable = () => {
                 <StyledTableCell align="right">
                   <SecondaryButton
                     label={"削除"}
-                    onClick={() => dispatch(removeFromCart(SelectedItem.cartId))}
+                    onClick={() => dispatch(removeFromCart(SelectedItem.cartId, index))}
                   />
                 </StyledTableCell>
               </StyledTableRow>
@@ -179,10 +214,10 @@ const CartTable = () => {
           )}
         </Paper>
         <div className="mt-20 text-center">
-          <span style={{display: 'inline-block', marginBottom: 20, marginRight: 20}}>
-            <SecondaryButton label="商品一覧画面へ戻る"></SecondaryButton>
+          <span style={{marginRight: 20, marginBottom: 20}}>
+            <SecondaryButton label="商品一覧画面へ戻る" onClick={() => history.push('/')}></SecondaryButton>
           </span>
-          <PrimaryButton label="商品一覧画面へ戻る"></PrimaryButton>
+          <PrimaryButton label="注文へ進む" onClick={() => goToOrderClicked()}></PrimaryButton>
         </div>
       </Container>
     </React.Fragment>

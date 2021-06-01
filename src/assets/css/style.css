@@ -81,4 +81,10 @@ body {
 .vertical-middle {
   vertical-align: bottom;
 }
+
+.button-3 {
+  display: 'inline-block';
+  margin-bottom: 20px;
+  margin-right: 20px;
+}
 /*# sourceMappingURL=style.css.map */

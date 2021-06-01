@@ -26,6 +26,7 @@ import { fetchProducts } from "../redux/products/operations";
 import ClearIcon from '@material-ui/icons/Clear';
 import HomeSwiper from "../components/Swiper/HomeSwiper";
 import Pagination from '@material-ui/lab/Pagination';
+import { Container } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   sliderBox: {
@@ -152,11 +153,12 @@ const ProductList = () => {
 
   return (
     <>
-    {imgaes.length > 0 && 
-      <div className={classes.sliderBox}>
-        <HomeSwiper images={imgaes}/>
-      </div>
-    }
+      <Container maxWidth='lg'>
+      {imgaes.length > 0 && 
+        <div className={classes.sliderBox}>
+          <HomeSwiper images={imgaes}/>
+        </div>
+      }
       <Paper className={classes.rootsearch}>
         <InputBase
           className={classes.input}
@@ -231,6 +233,7 @@ const ProductList = () => {
           page={page}
         />
       </div>
+      </Container>
     </>
   );
 };

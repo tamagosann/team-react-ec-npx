@@ -13,6 +13,7 @@ import { ShoppingCart } from '@material-ui/icons';
 import { useHistory } from 'react-router';
 import ClosableDrawer from './ClosableDrawer';
 import MenuIcon from '@material-ui/icons/Menu'
+import { Container } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -55,6 +56,7 @@ const Header = (props) => {
   return (
     <div className={classes.grow}>
       <AppBar position="fixed">
+      <Container maxWidth='lg'>
         <Toolbar>
           <Typography variant="h6" noWrap onClick={() => link('/')}>
             ECサイト！ 
@@ -91,6 +93,7 @@ const Header = (props) => {
             </IconButton>
           </div>
         </Toolbar>
+      </Container>
       </AppBar>
       <ClosableDrawer open={open} onClose={handleDrawerToggle} isSignedIn={username}/>
     </div>
