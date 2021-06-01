@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   mr20: {
-    marginRight: 20,
+    marginRight: 10,
   },
   menu: {
     [theme.breakpoints.down('xs')]: {
@@ -63,9 +63,9 @@ const Header = (props) => {
           </Typography>
           <div className={classes.grow} />
             { username && (
-              <div className={classes.mr20 + ' ' + classes.menu}>ようこそ、{username}様！</div>
+              <div className={classes.menu} style={{fontSize:14}}>{username}様</div>
             )}
-            <div className={classes.mr20 + ' ' + classes.menu}>
+            <div className={classes.menu}>
               <IconButton color="inherit" onClick={() => link('/cart')}>
                 <Badge badgeContent={props.cartLength} color="secondary">
                   <ShoppingCart />
