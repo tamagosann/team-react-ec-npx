@@ -59,7 +59,7 @@ const Header = (props) => {
       <Container maxWidth='lg'>
         <Toolbar>
           <Typography variant="h6" noWrap onClick={() => link('/')}>
-            ECサイト！ 
+            <img src="./logo1.png" alt="logo"/> 
           </Typography>
           <div className={classes.grow} />
             { username && (
