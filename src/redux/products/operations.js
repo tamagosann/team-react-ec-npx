@@ -4,14 +4,14 @@ import { fetchProductsAction, fetchToppingsAction } from "./actions";
 export const fetchProducts = () => {
     return async (dispatch) => {
         let products = [];
-        console.log('きたよおおお')
+        // console.log('きたよおおお')
         await db.collection('products').doc('FeKpGj7gUgt7dvFmbWIU').collection('parentProducts').get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
                     products.push({...doc.data(), productId: doc.id})
                 })
         });
-        console.log(products)
+        // console.log(products)
         dispatch(fetchProductsAction(products))
     }
 }

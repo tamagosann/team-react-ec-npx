@@ -119,7 +119,7 @@ const OrderHistory = () => {
   const selector = useSelector((state) => state);
   const orderHistory = getOrderHistory(selector);
   const dispatch = useDispatch();
-  console.log(orderHistory);
+  // console.log(orderHistory);
 
   useEffect(() => {
     dispatch(fetchOrderHistory());

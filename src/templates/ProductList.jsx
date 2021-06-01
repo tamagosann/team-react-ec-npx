@@ -122,7 +122,7 @@ const ProductList = () => {
     const newShowingProducts = products.filter(product => {
       return product.productName.indexOf(keyword) >= 0
     });
-    console.log(newShowingProducts);
+    // console.log(newShowingProducts);
     setShowingProducts([...newShowingProducts]);
   },[keyword, products, setShowingProducts])
 

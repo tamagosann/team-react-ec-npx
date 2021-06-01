@@ -119,7 +119,7 @@ const AdminOrderHistory = () => {
   const selector = useSelector((state) => state);
   const orderHistory = getOrderHistory(selector);
   const dispatch = useDispatch();
-  console.log(orderHistory);
+  // console.log(orderHistory);
 //sticky---------------------
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -129,7 +129,7 @@ const AdminOrderHistory = () => {
 
   const inputPassword = useCallback((e) => {
     setPassword(e.target.value)
-    console.log(password)
+    // console.log(password)
   },[setPassword, password]);
 
   const adminLoginClick = () => {
@@ -173,7 +173,7 @@ const AdminOrderHistory = () => {
 
   const handleChangeStatus = (event) => {
     setShippingStatus(event.target.value);
-    console.log(shippingStatus)      
+    // console.log(shippingStatus)      
   }
 
   if(adminLogin) {

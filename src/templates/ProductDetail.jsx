@@ -44,7 +44,7 @@ const ProductDetail = () => {
     const index = productsList.findIndex(selected => selected.productId === productId)
     const chosen = productsList[index];
     const toppings = getToppings(selector);
-    console.log(chosen);
+    // console.log(chosen);
 
     const [selectedSize, setSelectedSize] = useState('M');
     const [selectedPrice, setSelectedPrice] = useState(0);

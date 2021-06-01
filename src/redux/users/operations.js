@@ -23,7 +23,7 @@ export const listenAuthState = (history) => {
     return async (dispatch) => {
         return auth.onAuthStateChanged(user => {
             if(user) {
-                console.log(user)
+                // console.log(user)
                 const uid = user.uid;
                 const username = user.displayName;
                 const email = user.email
@@ -33,7 +33,7 @@ export const listenAuthState = (history) => {
                     username: username,
                     email: email,
                 }
-                console.log(loginUser)
+                // console.log(loginUser)
                 dispatch(setUserAction(loginUser));
             } else {
                 dispatch(logOutUserAction());
@@ -45,11 +45,11 @@ export const listenAuthState = (history) => {
 export const fetchProductsInCart = () => {
     return async (dispatch, getState) => {
         const uid = getState().users.uid;
-        console.log(uid)
+        // console.log(uid)
         let fetchedCart = [];
         await db.collection(`users/${uid}/cart`).get()
             .then(snapshot => {
-                console.log(snapshot)
+                // console.log(snapshot)
                 snapshot.forEach(doc => {
                     console.log(doc)
                     const data = doc.data();
@@ -60,7 +60,7 @@ export const fetchProductsInCart = () => {
                     fetchedCart.push(cartItem);
                 });
             })
-        console.log(fetchedCart)
+        // console.log(fetchedCart)
         dispatch(fetchProductsInCartAction(fetchedCart))
     }
 }

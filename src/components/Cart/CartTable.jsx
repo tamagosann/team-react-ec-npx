@@ -98,7 +98,7 @@ const CartTable = () => {
       localStorage.setItem('nologincart', JSON.stringify([]));
       
       if (noLoginCart.length > 0) {
-        console.log(noLoginCart);
+        // console.log(noLoginCart);
         noLoginCart.forEach(cartItem => {
           dispatch(noLoginAddToCart(cartItem))
         })
