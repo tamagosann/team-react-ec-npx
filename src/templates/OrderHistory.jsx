@@ -104,6 +104,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     maxHeight: 750,
   },
+  smallfont:{
+      fontSize: '14px'
+  }
 
 }));
 
@@ -230,7 +233,7 @@ const OrderHistory = () => {
                             <StyledTableCell className={"text-history"+' '+classes.position}>{order.orderDate}</StyledTableCell>
                         </TableRow>
                         <TableRow>
-                            <StyledTableCell className={"text-history"} align='center' colSpan={2}><div>〒 {order.destinationZipcode}</div><div>{order.destinationAddress}</div></StyledTableCell>
+                            <StyledTableCell className={"text-history"} align='center' colSpan={2}><div className={classes.smallfont}>〒 {order.destinationZipcode}</div><div className={classes.smallfont}>{order.destinationAddress}</div></StyledTableCell>
                         </TableRow>
                         <TableRow>
                             <StyledTableCell className={"text-history"} align='center'>氏名:</StyledTableCell>
@@ -258,7 +261,7 @@ const OrderHistory = () => {
                         <>
                          <div className={classes.red} align='center'>{order.amount.toLocaleString()}円(税込)</div>
                         <div className={"mt-20"}>
-                          <SecondaryButton label={"注文をキャンセルする"} onClick={() => dispatch(orderStatusChange(order.orderId, CANCEL))} />
+                          <SecondaryButton label={"注文をキャンセル"} onClick={() => dispatch(orderStatusChange(order.orderId, CANCEL))} />
                         </div>
                         </>
                       )}
