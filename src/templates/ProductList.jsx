@@ -133,7 +133,10 @@ const ProductList = () => {
 
   useEffect(() => {
     if(showingProducts.length > 9) {
-      const pages = (Math.floor(showingProducts.length / 9) + 1)
+      let pages = Math.floor(showingProducts.length / 9)
+      if(showingProducts.length % 9 !== 0) {
+        pages++;
+      }
       setPageCount(pages);
 
       const startProduct = (page * 9 - 9);
