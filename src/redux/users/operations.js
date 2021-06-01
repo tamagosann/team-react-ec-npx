@@ -138,6 +138,9 @@ export const order = (cart, destinationName, destinationMail,
             const uid = getState().users.uid;
             const userRef = db.collection('users').doc(uid);
             const timestamp = FirebaseTimestamp.now();
+            const email = getState().users.email;
+            const windowEmail = window.Email
+
 
             const dateToString = (date) => {
                 return date.getFullYear() + '-'
@@ -147,6 +150,23 @@ export const order = (cart, destinationName, destinationMail,
             };
 
             const orderDate = dateToString(timestamp.toDate());
+            const buyed = cart.map(item => 
+                    `【${item.productName}(${item.quantity}個）、
+                    トッピング：${item.toppingName} 】` 
+                    )
+            const total = cart.map(item => (item.productPrice * item.quantity) + item.toppingPrice).reduce((a, b) => a + b, 0)
+            
+            if(window.confirm('本当にこの内容でよろしいですか？')){
+            windowEmail.send({
+                Host : "smtp.elasticemail.com",
+                Username : "getstarted3601@gmail.com",
+                Password : "FF64CD6628A5154D408D64CF0FD27880A64B",
+                To : email,
+                From : "getstarted3601@gmail.com",
+                Subject : "購入完了のお知らせ",
+                Body : `この度はご購入いただきありがとうございました。ご購入いただいた商品は${buyed}です（合計金額：${total}円）。またのご利用をお待ちしております！`
+            }).then(alert('購入が完了しました。ご利用いただきありがとうございました！'))
+            history.push('/order/complete')
 
             await cart.forEach(cartItem => {
                 const cartItemMemo = userRef.collection('orders').doc();
@@ -178,6 +198,9 @@ export const order = (cart, destinationName, destinationMail,
                 cartItemMemo.set(orderedItem)
                 userRef.collection('cart').doc(cartItem.cartId).delete();
             });
+        } else {
+            alert('購入がキャンセルされました')
+        }
 
     }
 }
