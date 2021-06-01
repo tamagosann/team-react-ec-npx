@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     },
     flex: {
       display: 'flex',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
     },
     rootgrid: {
       flexGrow: 1,
