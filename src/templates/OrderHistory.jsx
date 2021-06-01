@@ -9,14 +9,14 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import CardMedia from "@material-ui/core/CardMedia";
 //buttonのimport
-import Button from "@material-ui/core/Button";
-import DeleteIcon from "@material-ui/icons/Delete";
+// import Button from "@material-ui/core/Button";
+// import DeleteIcon from "@material-ui/icons/Delete";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrderHistory } from "../redux/users/selectors";
 import { fetchOrderHistory, orderStatusChange } from "../redux/users/operations";
-import { WbIridescentRounded } from "@material-ui/icons";
+// import { WbIridescentRounded } from "@material-ui/icons";
 import { SecondaryButton } from "../components/UIKit";
-import { Hidden } from "@material-ui/core";
+// import { Hidden } from "@material-ui/core";
 import { CANCEL, DELIVERED, PAID, SENT, UNPAID } from "../common/status";
 
 
@@ -230,13 +230,15 @@ const OrderHistory = () => {
                             <StyledTableCell className={"text-history"+' '+classes.position}>{order.orderDate}</StyledTableCell>
                         </TableRow>
                         <TableRow>
-                            <StyledTableCell className={"text-history"} align='center' colSpan={2}>〒 {order.destinationZipcode}</StyledTableCell>
+                            <StyledTableCell className={"text-history"} align='center' colSpan={2}><div>〒 {order.destinationZipcode}</div><div>{order.destinationAddress}</div></StyledTableCell>
                         </TableRow>
                         <TableRow>
-                            <StyledTableCell className={"text-history"} align='center' colSpan={2}>{order.destinationAddress}</StyledTableCell>
+                            <StyledTableCell className={"text-history"} align='center'>氏名:</StyledTableCell>
+                            <StyledTableCell className={"text-history"} align='center'>{order.destinationName}</StyledTableCell>
                         </TableRow>
                         <TableRow>
-                            <StyledTableCell className={"text-history"} align='center' colSpan={2}>TEL: {order.destinationTel}</StyledTableCell>
+                            <StyledTableCell className={"text-history"} align='center'>TEL:</StyledTableCell>
+                            <StyledTableCell className={"text-history"} align='center'>{order.destinationTel}</StyledTableCell>
                         </TableRow>
                         {/* <div className={"text-history"}>注文日: {order.orderDate}</div>
                         <div className={"text-history"}>郵便番号: {order.destinationZipcode}</div>
@@ -247,9 +249,7 @@ const OrderHistory = () => {
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {order.status !== CANCEL && (
-                     <>
                       <div className={"text-history mb20"} align='center'>配達予定日: {order.destinationDate} </div>
-                    </>
                     )}
                     <div align="center">
                     <div  className={classes.message}>{getStatusInJapanese(order.status)}</div>
