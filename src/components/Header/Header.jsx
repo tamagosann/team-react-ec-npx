@@ -59,7 +59,7 @@ const Header = (props) => {
       <Container maxWidth='lg'>
         <Toolbar>
           <Typography variant="h6" noWrap onClick={() => link('/')}>
-            <img src="./logo1.png" alt="logo"/> 
+            <img src="https://firebasestorage.googleapis.com/v0/b/team-react-ec-npx.appspot.com/o/logo1.png?alt=media&token=6b07581a-d8ad-4d41-ba40-9223b0eec88f" alt="logo"/> 
           </Typography>
           <div className={classes.grow} />
             { username && (
