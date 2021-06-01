@@ -9,6 +9,7 @@ import {fetchProductsInCart, addToCart} from '../redux/users/operations'
 import { useDispatch } from 'react-redux';
 import { getUid } from '../redux/users/selectors';
 import { fetchProducts, fetchToppings } from '../redux/products/operations';
+import { SecondaryButton } from '../components/UIKit';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -130,7 +131,9 @@ const ProductDetail = () => {
         }
     },[chosen])
 
-    // selectedSize, selectedPrice, quantity, toppingId, toppingName, toppingPrice
+    const link = (path) => {
+        history.push(path);
+    };
 
     if(chosen && toppings) {
 
@@ -161,9 +164,10 @@ const ProductDetail = () => {
                         </FormControl>
                     </div>
                     <h3 className="product-h3">個数</h3>
-                    <FormControl className={classes.formControl} style={{ marginBottom: 40,}}>
-                        <InputLabel id="demo-simple-select-label">個数</InputLabel>
-                        <Select
+                        <div className="text-center">
+                            <FormControl className={classes.formControl} style={{ marginBottom: 20}}>
+                                <InputLabel id="demo-simple-select-label">個数</InputLabel>
+                                <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         value={quantity}
@@ -190,35 +194,41 @@ const ProductDetail = () => {
                             <MenuItem value={19}>19</MenuItem>
                             <MenuItem value={20}>20</MenuItem>
                         </Select>
-                    </FormControl>
-                    <span>小計: {(selectedPrice * quantity).toLocaleString()}円</span>
+                            </FormControl>
+                        </div>
+                    <Typography style={{textAlign:'center', marginBottom: 30}}>
+                        小計: <span style={{fontSize: 18, marginLeft: 10, marginRight: 10}}> {(selectedPrice * quantity).toLocaleString()} </span>円
+                    </Typography>
                     <h3 className="product-h3">トッピング</h3>
                     <Grid container justify='center' spacing={0} className={classes.rootgrid} style={{ marginBottom: 40,}}>
                         <Grid key={index} item xs={12} sm={12} className={classes.control}>
-                            <FormControl className={classes.formControl}>
-                                <InputLabel>トッピング</InputLabel>
-                                <Select
-                                    value={toppingName}
-                                    onChange={(event) => toppingOnChange(event)}
-                                >
-                                    <MenuItem value={'なし'}>なし</MenuItem>
-                                    {toppings.map(topping => {
-                                    return <MenuItem key={topping.toppingId} value={topping.toppingName}>{ topping.toppingName }</MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
-                            <span>価格:{ toppingPrice.toLocaleString() }円</span>
+                            <div className="text-center">
+                                <FormControl className={classes.formControl}>
+                                    <InputLabel>トッピング</InputLabel>
+                                    <Select
+                                        value={toppingName}
+                                        onChange={(event) => toppingOnChange(event)}
+                                    >
+                                        <MenuItem value={'なし'}>なし</MenuItem>
+                                        {toppings.map(topping => {
+                                        return <MenuItem key={topping.toppingId} value={topping.toppingName}>{ topping.toppingName }</MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <Typography style={{textAlign: 'center', marginTop: 20}}>価格: <span style={{fontSize: 18, marginLeft: 10, marginRight: 10}}> { toppingPrice.toLocaleString() } </span>円</Typography>
                         </Grid>
                     </Grid>
                     <h3 className="product-h3">合計金額</h3>
-                    <Typography>
-                        {((selectedPrice * quantity) + (toppingPrice * quantity)).toLocaleString()}円
+                    <Typography style={{textAlign: 'center'}}>
+                        合計金額（税抜き） <span style={{fontSize: 20, marginLeft: 10, marginRight: 10}}>{((selectedPrice * quantity) + (toppingPrice * quantity)).toLocaleString()}</span>円
                     </Typography>
-                    <Typography>
-                        <div className={'text-center'}>
-                            <PrimaryButton label='カートへ追加' onClick={() => dispatch(addToCart(selectedSize, selectedPrice, quantity, toppingId, toppingName, toppingPrice, history, chosen))} ></PrimaryButton>
-                        </div>
-                    </Typography>
+                    <div className={'text-center'} style={{marginTop: 30, marginBottom: 50}}>
+                        <span style={{ display: 'inline-block', marginRight: 30, marginBottom: 30}}>
+                            <SecondaryButton label='商品一覧へ戻る' onClick={() => link('/')} />
+                        </span>
+                        <PrimaryButton label='カートへ追加' onClick={() => dispatch(addToCart(selectedSize, selectedPrice, quantity, toppingId, toppingName, toppingPrice, history, chosen))} ></PrimaryButton>
+                    </div>
                 </Paper>
             </Container>
         )
