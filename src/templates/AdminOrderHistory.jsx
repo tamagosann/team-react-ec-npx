@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
   },
   message: {
     fontWeight: "bold",
-    fontSize: "20px",
+    fontSize: "15px",
     position: "relative",
   },
   formControl: {
@@ -109,6 +109,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     maxHeight: 750,
   },
+  smallfont:{
+    fontSize: '14px'
+}
 }));
 
 const AdminOrderHistory = () => {
@@ -217,7 +220,7 @@ const AdminOrderHistory = () => {
                             <TableRow>
                                 <StyledTableCell className={classes.message}>{order.productName}</StyledTableCell>
                                 <StyledTableCell align="right">{ order.productSize }</StyledTableCell>
-                                <StyledTableCell align="left" className={classes.message2}>× {order.quantity}</StyledTableCell>
+                                <StyledTableCell align="left" className={classes.message}>× {order.quantity}</StyledTableCell>
                             </TableRow>
                             <TableRow>
                                 <StyledTableCell>+ {order.toppingName}</StyledTableCell>
@@ -259,7 +262,7 @@ const AdminOrderHistory = () => {
                             <StyledTableCell className={"text-history"+' '+classes.position}>{order.orderDate}</StyledTableCell>
                         </TableRow>
                         <TableRow>
-                            <StyledTableCell className={"text-history"} align='center' colSpan={2}><div>〒 {order.destinationZipcode}</div><div>{order.destinationAddress}</div></StyledTableCell>
+                            <StyledTableCell className={"text-history"} align='center' colSpan={2}><div className={classes.smallfont}>〒 {order.destinationZipcode}</div><div className={classes.smallfont}>{order.destinationAddress}</div></StyledTableCell>
                         </TableRow>
                         <TableRow>
                             <StyledTableCell className={"text-history"} align='center'>氏名:</StyledTableCell>
