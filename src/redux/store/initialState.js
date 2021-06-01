@@ -35,26 +35,26 @@ const initialState = {
             // }
         ],
         toppings: [
-            {
-                toppingId: 'aaa',
-                toppingName: 'onion 少なめ',
-                price: 100,
-            },
-            {
-                toppingId: 'bbb',
-                toppingName: 'onion 多め',
-                price: 150,
-            },
-            {
-                toppingId: 'ccc',
-                toppingName: 'sermon 少なめ',
-                price: 150,
-            },
-            {
-                toppingId: 'ddd',
-                toppingName: 'sermon 多め',
-                price: 200,
-            },
+            // {
+            //     toppingId: 'aaa',
+            //     toppingName: 'onion 少なめ',
+            //     price: 100,
+            // },
+            // {
+            //     toppingId: 'bbb',
+            //     toppingName: 'onion 多め',
+            //     price: 150,
+            // },
+            // {
+            //     toppingId: 'ccc',
+            //     toppingName: 'sermon 少なめ',
+            //     price: 150,
+            // },
+            // {
+            //     toppingId: 'ddd',
+            //     toppingName: 'sermon 多め',
+            //     price: 200,
+            // },
         ],
     },
 
@@ -62,31 +62,31 @@ const initialState = {
         uid: '',　//ログイン後はgoogleのユーザIDが入る
         isSignedIn: false,
         username: '',
-        userInfo: {// この中身はfirebaseのuser/userinfoサブコレクションから持ってくる
-            uid: '1122334455',
-            productId: '0002',
-            // status: '1',　statusは省く
-            orderDate: '2021-05-04',
-            destinationName: '相澤',
-            destinationZipcode: '1111111',
-            destinationAddress: '東京都',
-            destinationTel: '090-8888-8888',
-            destinationTime: '2021-05-10',
-            paymentMethod: 1,
-            creditCardNo: '1111-1111-1111-1111',
-        },
+        // userInfo: {// この中身はfirebaseのuser/userinfoサブコレクションから持ってくる
+        //     uid: '1122334455',
+        //     productId: '0002',
+        //     // status: '1',　statusは省く
+        //     orderDate: '2021-05-04',
+        //     destinationName: '相澤',
+        //     destinationZipcode: '1111111',
+        //     destinationAddress: '東京都',
+        //     destinationTel: '090-8888-8888',
+        //     destinationTime: '2021-05-10',
+        //     paymentMethod: 1,
+        //     creditCardNo: '1111-1111-1111-1111',
+        // },
         // role: '', //管理者かユーザーかを認識するために使う
         cart: [ //この中身はfirebaseのuser/cartサブコレクションから持ってくる
-            {
-                productId: '0001',
-                url: '../../unko/unko.jpg',
-                productSize: 'm',
-                productPrice: 300,
-                quantity: 2,
-                toppingId: 'aaa',
-                toppingName: 'sermon 多め',
-                toppingPrice: 200,
-            },
+            // {
+            //     productId: '0001',
+            //     url: '../../unko/unko.jpg',
+            //     productSize: 'm',
+            //     productPrice: 300,
+            //     quantity: 2,
+            //     toppingId: 'aaa',
+            //     toppingName: 'sermon 多め',
+            //     toppingPrice: 200,
+            // },
         ],
         orders: [],
     }

@@ -72,7 +72,7 @@ const Header = (props) => {
             </div>
             {username && (
               <div className={classes.mr20 + ' ' + classes.menu}>
-                <PrimaryButton label={'注文履歴'} onClick={() => link('./order/history')}/>
+                <PrimaryButton label={'注文履歴'} onClick={() => link('/order/history')}/>
               </div>
             )}
             {!username && (

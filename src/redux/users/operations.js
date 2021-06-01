@@ -103,22 +103,13 @@ export const addToCart = (selectedSize, selectedPrice, quantity, toppingId, topp
     }
 }
 
-export const removeFromCart = (item, index) => {
-    console.log('firebaseから削除する関数');
-    console.log(item.productId)
+export const removeFromCart = (cartId) => {
     return async (dispatch, getState) => {
+        if(!window.confirm('本当にカートから消去しますか？')) {
+            return false;
+        }
         const uid = getState().users.uid;
-        const cartItems = []
-        await 
-        // 一度cartコレクションから全部取ってくる
-        db.collection(`users/${uid}/cart`).get().then(snapshot => snapshot.forEach(doc => cartItems.push({...doc.data(), cartId: doc.id})))
-        // 削除する商品をfilterかけて取り出す
-        const filteredItems = cartItems.filter(cartItem => cartItem.productId === item.productId)
-        const itemToDelete = filteredItems[0]
-        // 該当の商品をfirestoreから消す
-        db.doc(`users/${uid}/cart/${itemToDelete.cartId}`).delete()
-        // dispatch
-        dispatch(removeFromCartAction(item, index))
+        await db.collection(`users/${uid}/cart`).doc(cartId).delete()
     }
 }
 
