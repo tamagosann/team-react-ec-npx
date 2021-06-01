@@ -59,7 +59,7 @@ const initialState = {
     },
 
     users: {
-        uid: '',　//ログイン後はgoogleのユーザIDが入る
+        uid: null,　//ログイン後はgoogleのユーザIDが入る
         isSignedIn: false,
         username: '',
         // userInfo: {// この中身はfirebaseのuser/userinfoサブコレクションから持ってくる
