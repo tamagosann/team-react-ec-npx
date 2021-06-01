@@ -151,10 +151,10 @@ export const order = (cart, destinationName, destinationMail,
 
             const orderDate = dateToString(timestamp.toDate());
             const buyed = cart.map(item => 
-                    `【${item.productName}(${item.quantity}個）、
+                    `【${item.productName}(${item.productSize} × ${item.quantity}個）、
                     トッピング：${item.toppingName} 】` 
                     )
-            const total = cart.map(item => (item.productPrice * item.quantity) + item.toppingPrice).reduce((a, b) => a + b, 0)
+            const total = cart.map(item => (item.productPrice * item.quantity) + item.toppingPrice).reduce((a, b) => (a + b) , 0)
             
             if(window.confirm('本当にこの内容でよろしいですか？')){
             windowEmail.send({
@@ -164,7 +164,7 @@ export const order = (cart, destinationName, destinationMail,
                 To : email,
                 From : "getstarted3601@gmail.com",
                 Subject : "購入完了のお知らせ",
-                Body : `この度はご購入いただきありがとうございました。ご購入いただいた商品は${buyed}です（合計金額：${total}円）。またのご利用をお待ちしております！`
+                Body : `この度はご購入いただきありがとうございました。ご購入いただいた商品は${buyed}です（合計金額：${total * 1.1}円）。またのご利用をお待ちしております！`
             }).then(alert('購入が完了しました。ご利用いただきありがとうございました！'))
             history.push('/order/complete')
 

@@ -259,7 +259,7 @@ const OrderHistory = () => {
                     </div>
                     {order.status === UNPAID && (
                         <>
-                         <div className={classes.red} align='center'>{order.amount.toLocaleString()}円(税込)</div>
+                         <div className={classes.red} align='center'>{Math.floor(order.amount * 1.1).toLocaleString()}円(税込)</div>
                         <div className={"mt-20"}>
                           <SecondaryButton label={"注文をキャンセル"} onClick={() => dispatch(orderStatusChange(order.orderId, CANCEL))} />
                         </div>
