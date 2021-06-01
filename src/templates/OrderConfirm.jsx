@@ -339,7 +339,7 @@ const OrderConfirm = () => {
               </h1>
               <h1 align="center">
                 ご注文合計金額:
-                {sum.toLocaleString()}円(税込)
+                {Math.floor(sum * 1.1).toLocaleString()}円(税込)
               </h1>
             </>
           )}
@@ -383,6 +383,7 @@ const OrderConfirm = () => {
         label="住所"
         id="address"
         fullWidth
+        style={{maxWidth: 500}}
         value={ destinationAddress }
         onChange={ destinationAddressChange }
       />
