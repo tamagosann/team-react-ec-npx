@@ -217,7 +217,9 @@ const CartTable = () => {
           <span style={{marginRight: 20, marginBottom: 20}}>
             <SecondaryButton label="商品一覧画面へ戻る" onClick={() => history.push('/')}></SecondaryButton>
           </span>
-          <PrimaryButton label="注文へ進む" onClick={() => goToOrderClicked()}></PrimaryButton>
+          { cart.length !== 0 && (
+            <PrimaryButton label="注文へ進む" onClick={() => goToOrderClicked()}></PrimaryButton>
+          )}
         </div>
       </Container>
     </React.Fragment>
