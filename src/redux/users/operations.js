@@ -51,7 +51,7 @@ export const fetchProductsInCart = () => {
             .then(snapshot => {
                 // console.log(snapshot)
                 snapshot.forEach(doc => {
-                    console.log(doc)
+                    // console.log(doc)
                     const data = doc.data();
                     const cartItem = {
                         ...data,
@@ -164,7 +164,7 @@ export const order = (cart, destinationName, destinationMail,
                 To : email,
                 From : "getstarted3601@gmail.com",
                 Subject : "購入完了のお知らせ",
-                Body : `この度はご購入いただきありがとうございました。ご購入いただいた商品は${buyed}です（合計金額：${total * 1.1}円）。またのご利用をお待ちしております！`
+                Body : `この度はご購入いただきありがとうございました。ご購入いただいた商品は${buyed}です（合計金額：${Math.floor(total * 1.1)}円）。またのご利用をお待ちしております！`
             }).then(alert('購入が完了しました。ご利用いただきありがとうございました！'))
             history.push('/order/complete')
 
